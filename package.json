@@ -1,0 +1,26 @@
+{
+  "name": "aneu",
+  "version": "0.0.0",
+  "description": "mucking about",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/insanity54/aneu"
+  },
+  "author": "Chris Grimmett <chris@grimtech.net>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/insanity54/aneu/issues"
+  },
+  "homepage": "https://github.com/insanity54/aneu",
+  "dependencies": {
+    "passport": "~0.2.0",
+    "passport-twitter": "~1.0.2",
+    "nconf": "~0.6.9",
+    "express": "~3.4.8"
+  }
+}
