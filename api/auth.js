@@ -45,11 +45,10 @@ var auth = function(app) {
 		// if this func gets called, auth was successful.
 		// req.user contains the authenticated user.
                 
-                user.findOrCreateTwitter(req.user, function(err, done) {
-                    if (err) { return done(err); }
-                    console.dir(req.user);
-                    res.redirect('/user/' + req.user.username);
-                });
+
+                res.redirect('/user/' + req.user.username);
+
+                
                     
 		// res.send(['welcome, ' + req.user._json.name,
                 //           '<img src="' + req.user._json.profile_image_url + '"/>',
@@ -84,27 +83,29 @@ var auth = function(app) {
     },
 
     // when user successfully authenticates with twitter, do this:
-        function(token, tokenSecret, profile, done) {
-            user.getTwitter(profile.id, function(err, found) {
-                // @todo this function can be abstracted a bit better in the user module
+                                     function(token, tokenSecret, profile, done) {
 
-                if (!found) {
-                    user.create(profile, function(err, user) {
-                        if (err) throw err;
-		    });
-                }
+            // we're going to use the twitter user id (tuid) to find our user id (uid)
+            var tuid = profile.id;
+            console.dir(tuid);
+            user.findOrCreateTwitter(tuid, function(err, uid) {
+                //if (err) { return done(err); }
+                //else
 
-                // successfully found or created user
                 done(null, profile);
-
                 // done is a passport.js 'verify callback.'
                 // in a server exeption, set err to non-null value.
                 // in an auth failure, err remains null, and use final arg to pass additional details.
                 // more info: http://passportjs.org/guide/configure/
                 // error finding or creating user
             });
-	}))
-};
+        })
+    )
+}
+
+
+
+
 
 module.exports = auth;
 

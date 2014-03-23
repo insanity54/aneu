@@ -14,22 +14,22 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //
 // Create a user
 //   Increment user ID (UID)
-//     INCR users/uids
+//     INCR user/uids
 //
 //   Add UID to set containing all UIDs
-//     SADD users/all 1         // add user ID to set of all user IDs
+//     SADD user/all 1         // add user ID to set of all user IDs
 //
 //   Set user data
-//     SET users/1/first_name Pete
-//     SET users/1/last_name Rogers
-//     SET users/1/username petey54
+//     SET user/1/first_name Pete
+//     SET user/1/last_name Rogers
+//     SET user/1/username petey54
 //
 //
 // Look up a user
 //   KEYS users/x/*             // (inject user's ID at x)
-//   1) users/x/first_name
-//   2) users/x/last_name
-//   3) users/x/username
+//   1) user/x/first_name
+//   2) user/x/last_name
+//   3) user/x/username
 //
 //   GET users/x/first_name
 //   "Pete"
@@ -40,15 +40,16 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //
 //
 // Show all UIDs
-//   SMEMBERS users/all       // show all user IDs
+//   SMEMBERS user/all       // show all user IDs
 //
 //
 // Get UID using username
 //   
-//   users/x/username insanity54
+//   user/x/username insanity54
 //
 //
 // Get UID using twitter ID
+//   user/uid/twitter/
 //
 // Get UID using facebook ID
 // 
@@ -56,12 +57,24 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 
 
 
-exports.getUid = function(requesteduser, callback) {
+//exports.getUid = function(requesteduser, callback) {
     
 
-    client.
-}
+//    client.
+//}
+exports.findOrCreateTwitter = function(tuid, callback) {
 
+    callback(null, 1);
+
+                // if (uid != null) {
+                //     // we found an existing uid that matches the tuid
+
+                // } else {
+                //     // we didn't find a match
+                //     user.createTwitter
+
+                // }
+}
 
 exports.getUser = function(requesteduser, callback) {
 
@@ -95,6 +108,5 @@ exports.getUser = function(requesteduser, callback) {
         }
     });
 }
-
 
 

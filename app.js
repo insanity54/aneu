@@ -46,15 +46,7 @@ passport.serializeUser(function(usr, done) {
 
 passport.deserializeUser(function(id, done) {
     console.log('ima deserializin and the user id is ' + id );
-
-    // user.get_twitter(id, function (err, user) {
-    //     if (err) throw err;
-    //     if (!user) {
-    //         done(null, null)
-    //     };
-    //     done(null, user);
-    // });
-    done(null, user);
+    done(null, id);
 });
 
 
