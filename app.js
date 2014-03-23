@@ -9,7 +9,7 @@ var server = http.createServer(app);
 var nconf = require('nconf');
 var passport = require('passport');
 //var passport-twitter = require('passport-twitter');
-var middleware = require('./middleware');
+//var middleware = require('./middleware');
 //var passport = require('./component/passport');
 //var component = require('./component');  // things like user module (db calls)
 
@@ -25,6 +25,7 @@ app.set('title', nconf.get('TITLE'));
 app.set('session_secret', nconf.get('SESSION_SECRET'));
 app.set('twitter_consumer_key', nconf.get('TWITTER_CONSUMER_KEY'));
 app.set('twitter_secret_key', nconf.get('TWITTER_SECRET_KEY'));
+app.set('redisserver', nconf.get('REDISSERVER'));
 
 // some expressy stuffy stuff
 app.use(express.cookieParser());
@@ -46,13 +47,14 @@ passport.serializeUser(function(usr, done) {
 passport.deserializeUser(function(id, done) {
     console.log('ima deserializin and the user id is ' + id );
 
-    user.get_twitter(id, function (err, user) {
-        if (err) throw err;
-        if (!user) {
-            done(null, null)
-        };
-        done(null, user);
-    });
+    // user.get_twitter(id, function (err, user) {
+    //     if (err) throw err;
+    //     if (!user) {
+    //         done(null, null)
+    //     };
+    //     done(null, user);
+    // });
+    done(null, user);
 });
 
 
@@ -61,6 +63,7 @@ require('./routes')(app);
 
 // api endpoints
 require('./api/auth')(app);
+require('./api/user')(app);
 
 server.listen(port);
 console.log('server listening on port ' + port);

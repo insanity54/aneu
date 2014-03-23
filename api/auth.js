@@ -1,6 +1,6 @@
 var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
-var user = require('../component/user');
+var user = require('../middleware/user');
 
 
 var auth = function(app) {
@@ -13,7 +13,13 @@ var auth = function(app) {
     //   - twitter calls back /api/auth/twitter/callback with success or fail
     app.get('/api/auth/twitter',
 	    tester,
-	    passport.authenticate('twitter'));
+	    passport.authenticate('twitter'),
+            function(req, res) {
+                // If this function gets called, auth was successful.
+                // req.user contains authenticated user
+
+                
+            });
 
     function tester(req, res, next) {
         console.log('tester has run, we had a test');
@@ -38,11 +44,16 @@ var auth = function(app) {
 	    function(req, res) {
 		// if this func gets called, auth was successful.
 		// req.user contains the authenticated user.
-
-                console.dir(req.user);
-		res.send(['welcome, ' + req.user._json.name,
-                          '<img src="' + req.user._json.profile_image_url + '"/>',
-                         ].join("<br>"));
+                
+                user.findOrCreateTwitter(req.user, function(err, done) {
+                    if (err) { return done(err); }
+                    console.dir(req.user);
+                    res.redirect('/user/' + req.user.username);
+                });
+                    
+		// res.send(['welcome, ' + req.user._json.name,
+                //           '<img src="' + req.user._json.profile_image_url + '"/>',
+                //          ].join("<br>"));
 	    });
 
     app.get("/secret", function(req, res) {
@@ -74,7 +85,7 @@ var auth = function(app) {
 
     // when user successfully authenticates with twitter, do this:
         function(token, tokenSecret, profile, done) {
-            user.get_twitter(profile.id, function(err, found) {
+            user.getTwitter(profile.id, function(err, found) {
                 // @todo this function can be abstracted a bit better in the user module
 
                 if (!found) {

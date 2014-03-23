@@ -1,5 +1,5 @@
 var passport = require('passport');
-var user = require('../component/user');
+var user = require('./user');
 
 console.log('MIDDLEWARE AUTH HAS BEEN CALLED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
@@ -20,7 +20,7 @@ function deserialize(req, res, next) {
     passport.deserializeUser(function(id, done) {
 	console.log('ima deserializin and the user id is ' + id );
         
-	user.get_twitter(id, function (err, user) {
+	user.getTwitter(id, function (err, user) {
             if (err) throw err;
             if (!user) {
                  done(null, null)
