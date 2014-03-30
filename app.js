@@ -8,6 +8,7 @@ var app = express();
 var server = http.createServer(app);
 var nconf = require('nconf');
 var passport = require('passport');
+var nunjucks = require('nunjucks');
 //var passport-twitter = require('passport-twitter');
 //var middleware = require('./middleware');
 //var passport = require('./component/passport');
@@ -22,10 +23,15 @@ app.set('port', nconf.get('PORT'));
 port = app.get('port');
 
 app.set('title', nconf.get('TITLE'));
+app.set('subtitle', nconf.get('SUBTITLE'));
 app.set('session_secret', nconf.get('SESSION_SECRET'));
 app.set('twitter_consumer_key', nconf.get('TWITTER_CONSUMER_KEY'));
 app.set('twitter_secret_key', nconf.get('TWITTER_SECRET_KEY'));
 app.set('redisserver', nconf.get('REDISSERVER'));
+
+// nunjucks templating
+nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader(__dirname + '/tpl'), { autoescape: true });
+nunjucksEnv.express(app);
 
 // some expressy stuffy stuff
 app.use(express.cookieParser());
@@ -34,9 +40,7 @@ app.use(express.session({ secret: app.get('session_secret') }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.logger('dev')); // @todo for production,  change this
-//        rclient.on("error", function(err) {
-//        console.log("Error " + err);
-//});
+app.use(express.static(__dirname + '/static'));
 
 // passport setup
 passport.serializeUser(function(usr, done) {
@@ -52,10 +56,12 @@ passport.deserializeUser(function(id, done) {
 
 // routes
 require('./routes')(app);
+app.get('/test', function(req, res) {
+    res.render('inventory.html');
+});
 
 // api endpoints
 require('./api/auth')(app);
-require('./api/user')(app);
 
 server.listen(port);
 console.log('server listening on port ' + port);

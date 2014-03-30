@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{{ title }}</title>
+
+
+
+    {# Bootstrap CSS #}
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    {# X-editable CSS #}
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+
+    {# My CSS #}
+    <style>
+      .grid-container {
+        border: 1px dashed #CCC;
+        position: relative;
+        width: 100%;
+      }
+
+      .grid-container > div {
+        height: 50px;
+        position: absolute;
+        width: 50px;
+      }
+    </style>
+
+
+    {# jQuery & jQuery UI #}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    
+    {# jQuery Touch Punch #}
+    <script src="/jquery.ui.touch-punch.js"></script>
+
+    {# jQuery Shapeshift sortable grid #}
+    <script src="/jquery.shapeshift.js"></script>
+
+    {# Bootstrap JS #}
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script> 
+
+    {# X-editable JS #}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
+
+
+
+ 
+    <script type="text/javascript">
+    $(document).ready(function() {
+      $(".grid-container").shapeshift();
+    })
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    {% block header %}
+    This is the default content
+    {% endblock %}
+
+    <section class="left">
+      {% block left %}{% endblock %}
+    </section>
+
+    <section class="center">
+      {% block center %}
+      This is the center
+      {% endblock %}
+    </section>
+
+    <section class="right">
+      {% block right %}
+      This is more content
+      {% endblock %}
+    </section>
+
+  </body>
+</html>

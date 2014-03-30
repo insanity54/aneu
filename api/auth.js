@@ -1,11 +1,9 @@
 var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
-var user = require('../middleware/user');
+var db = require('../middleware/user');
 
 
 var auth = function(app) {
-
-
     // when user wants to sign in using twitter
     //   - the user's browser posts /api/auth/twitter
     //   - user's browser redirects to twitter
@@ -17,8 +15,6 @@ var auth = function(app) {
             function(req, res) {
                 // If this function gets called, auth was successful.
                 // req.user contains authenticated user
-
-                
             });
 
     function tester(req, res, next) {
@@ -36,7 +32,8 @@ var auth = function(app) {
         console.log('we are authenticated, lets have a taste');
         next();
     };
- 
+
+    // after user logs in via twitter, this route receives the callback
     app.get('/api/auth/twitter/callback',
             toaster,
 	    passport.authenticate('twitter'),
@@ -44,16 +41,9 @@ var auth = function(app) {
 	    function(req, res) {
 		// if this func gets called, auth was successful.
 		// req.user contains the authenticated user.
-                
-
+                                
                 res.redirect('/user/' + req.user.username);
-
-                
-                    
-		// res.send(['welcome, ' + req.user._json.name,
-                //           '<img src="' + req.user._json.profile_image_url + '"/>',
-                //          ].join("<br>"));
-	    });
+            });
 
     app.get("/secret", function(req, res) {
 	//    res.send(nconf.get('secret') + ' <a href="/logout">log</a>');
@@ -83,27 +73,25 @@ var auth = function(app) {
     },
 
     // when user successfully authenticates with twitter, do this:
-                                     function(token, tokenSecret, profile, done) {
+    function(token, tokenSecret, profile, done) {
 
-            // we're going to use the twitter user id (tuid) to find our user id (uid)
-            var tuid = profile.id;
-            console.dir(tuid);
-            user.findOrCreateTwitter(tuid, function(err, uid) {
-                //if (err) { return done(err); }
-                //else
-
-                done(null, profile);
-                // done is a passport.js 'verify callback.'
-                // in a server exeption, set err to non-null value.
-                // in an auth failure, err remains null, and use final arg to pass additional details.
-                // more info: http://passportjs.org/guide/configure/
-                // error finding or creating user
-            });
-        })
-    )
+        // we're going to use the twitter user id (tuid)
+        // to find our user id (uid)
+        var tuid = profile.id;
+        console.dir(tuid);
+        db.findOrCreateTwitter(tuid, function(err, uid) {
+            //if (err) { return done(err); }
+            //else
+            
+            // done is a passport.js 'verify callback.'
+            // in a server exeption, set err to non-null value.
+            // in an auth failure, err remains null, and use
+            // final arg to pass additional details.
+            // more info: http://passportjs.org/guide/configure/
+            done(null, profile);
+        });
+    }))
 }
-
-
 
 
 
