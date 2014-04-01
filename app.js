@@ -43,15 +43,16 @@ app.use(express.logger('dev')); // @todo for production,  change this
 app.use(express.static(__dirname + '/static'));
 
 // passport setup
-passport.serializeUser(function(usr, done) {
-    console.log('ima serializeing');
-    done(null, usr.id);
-});
+require('./middleware/auth')
+// passport.serializeUser(function(usr, done) {
+//     console.log('ima serializeing');
+//     done(null, usr.id);
+// });
 
-passport.deserializeUser(function(id, done) {
-    console.log('ima deserializin and the user id is ' + id );
-    done(null, id);
-});
+// passport.deserializeUser(function(id, done) {
+//     console.log('ima deserializin and the user id is ' + id );
+//     done(null, id);
+// });
 
 
 // routes

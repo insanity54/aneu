@@ -13,6 +13,30 @@ var routes = function(app) {
     var subtitle = app.get('subtitle');
 
 
+    /**
+     *  testing
+     */
+    app.get('/test', function(req, res) {
+        db.findOrCreateTwitter('27835703', function(err, uid) {
+            if (err) throw err;
+            console.log('user ID is: ' + uid + '.');
+            res.send('user ID is: ' + uid + '.');
+        });
+    });
+        
+    app.get('/test2', function(req, res) {
+        db.testCall(function(err, uddie) {
+            if (err) throw err;
+            console.log('WE GOT AN UDDIE: ' + uddie);
+            res.send('uddie: ' + uddie);
+        });
+    });
+
+    app.get('/user/type', function(req, res) {
+        db.getUserType(req.user, function(err, type) {
+            
+        });
+    });
 
     /**
      * Root of the web app
@@ -24,20 +48,34 @@ var routes = function(app) {
      * Admin control panel
      */
     app.get('/admin', function(req, res) {
-//        if (user.isAdmin(user.getUser
-        // @todo
+        // if session exists
+        if (req.user) {
+            console.log('session exists');
+            db.isAdmin(req.user, function(err, admin) {
+                if (err) throw err;
+                if (admin) {
+                    // user is in admin group
+                    res.send('you\'re an admin now, boy');
+                } else {
+                    res.send('you are nut an admin.');
+                }
+            });
+        } else {
+            console.log('session does not exist');
+        }
     });
 
 
     /**
      * User stats & inventory page
      */
-    app.get('/user/:username', function(req, res) {
+    app.get('/user/:uid', function(req, res) {
 
 
-        var requser = req.params.username
+        var requser = req.params.uid
         var userinfo = {};
 
+        // @todo we want to be able to use a username instead of a UID
         // get username from URL (^requser)
         // from username get UID (db.getUid)
         // use UID to get user object (db.getUser)

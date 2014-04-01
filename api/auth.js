@@ -41,8 +41,8 @@ var auth = function(app) {
 	    function(req, res) {
 		// if this func gets called, auth was successful.
 		// req.user contains the authenticated user.
-                                
-                res.redirect('/user/' + req.user.username);
+
+                res.redirect('/user/' + req.user);
             });
 
     app.get("/secret", function(req, res) {
@@ -82,13 +82,18 @@ var auth = function(app) {
         db.findOrCreateTwitter(tuid, function(err, uid) {
             //if (err) { return done(err); }
             //else
-            
+            //
             // done is a passport.js 'verify callback.'
             // in a server exeption, set err to non-null value.
             // in an auth failure, err remains null, and use
             // final arg to pass additional details.
             // more info: http://passportjs.org/guide/configure/
-            done(null, profile);
+
+            // @todo possibility for future: get user's twitter info that we need
+
+            // get UID from TUID
+            console.log('TUID: ' + tuid + ' => UID: ' + uid);
+            done(null, uid);
         });
     }))
 }
