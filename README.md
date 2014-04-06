@@ -5,12 +5,13 @@ mucking about
 
 
 
-Directories
+
+
+
+Attribution
 -----------
 
-./api  is for parts that are acessbile using a url (ex: http://dwane.co/api/auth/twitter)
+Font Awesome by Dave Gandy - http://fontawesome.io
 
-./middleware is for modules that grab info before displaying it to the user
-
-./component is for helper functions ie database calls
+WebHostingHub Glyphs - http://www.webhostinghub.com/glyphs/
 

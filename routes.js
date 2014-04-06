@@ -51,11 +51,20 @@ var routes = function(app) {
         // if session exists
         if (req.user) {
             console.log('session exists');
+                
             db.isAdmin(req.user, function(err, admin) {
                 if (err) throw err;
                 if (admin) {
                     // user is in admin group
-                    res.send('you\'re an admin now, boy');
+                    console.log('user is in admin group');
+
+                    db.getAllChampions(function(err, champions) {
+                        console.log('got all champs: ');
+                        console.dir(champions);
+                        console.log('champ1 sword: ' + champions[1].sword);
+                        res.render('admin.html', {champions: champions});
+                    });
+
                 } else {
                     res.send('you are nut an admin.');
                 }
@@ -78,18 +87,19 @@ var routes = function(app) {
         // @todo we want to be able to use a username instead of a UID
         // get username from URL (^requser)
         // from username get UID (db.getUid)
-        // use UID to get user object (db.getUser)
+        // use UID to get user object (db.getChampion)
 
         // work with redis to get user object
-        db.getUser(requser, function (err, user) {
+        db.getChampion(requser, function (err, champion) {
             if (err) {
                 console.log('error interacting with redis');
                 res.send('no such user');
+                
             } else {
                 console.log('no errs interacting with redis');
-                console.dir(user);
+                console.dir(champion);
                 res.render('inventory.html',
-                           { user: user,
+                           { champion: champion,
                              title: title,
                              subtitle: subtitle
                            });

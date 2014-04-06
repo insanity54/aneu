@@ -9,6 +9,7 @@ console.log('MIDDLEWARE AUTH HAS BEEN CALLED !!!');
 // and stores the identifying information in the sesion data
 passport.serializeUser(function(uid, done) {
     console.log('ima serializeing 4 real');
+    console.dir(uid);
     done(null, uid);
 });
 
@@ -19,13 +20,14 @@ passport.serializeUser(function(uid, done) {
 passport.deserializeUser(function(uid, done) {
     console.log('ima 4real deserializin and the user id is ' + uid );
     
-    db.getUser(uid, function (err, user) {
-        if (err) throw err;
-        if (!user) {
-            done(null, null)
-        };
-        done(null, user);
-    });
+    done(null, uid);
+//    db.getChampion(uid, function (err, user) {
+//        if (err) throw err;
+//        if (!user) {
+//            done(null, null)
+//        };
+//        done(null, user);
+//    });
 });
 
 

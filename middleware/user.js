@@ -13,22 +13,52 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 ////////////////////////////////////////
 ////////////////////////////////////////
 //
-// users (n = UID)
+// users (n = UID) (user ID)
 //
 // (key) user/n/info1
 // (key) user/n/acct    // account type (twitter, facebook, or google)
 // (key) user/n/info3
-// (key) user/n/inv/weapon
-// (key) user/n/inv/helm
-// (key) user/n/inv/armor
-// (key) user/n/inv/boots
-// (key) user/n/stats/level
 //
-//
+// champions (n = CID) (champion ID)
+// (key) champion/n/inv/weapon
+// (key) champion/n/inv/helm
+// (key) champion/n/inv/armor
+// (key) champion/n/inv/boots
+// (key) champion/n/stats/level
 //
 // admins. UIDs in this set are allowed admin access
 // 
 // (set) admin/all
+//
+//
+// Items
+// (key) item/index  // an index for item ID numbers
+// (sorted set) item/weapon
+// (sorted set) item/potion
+// (sorted set) item/tool
+//
+// items have:
+//   - name
+//   - description
+//   - picture
+//   - stats (@todo future)
+//     - attack
+//     - defense
+//     - durability
+//
+// item/index             an index of all item ID numbers (iid)
+// item/all               a set containing all IIDs.
+// item/weapon            a set of item numbers belonging to the weapon group
+// item/consumable        a set of iids belonging to the consumable group
+//
+// item/iid/name          (key) name of item
+// item/iid/description   (key) description of item
+// item/iid/picture       base64 encoded png/jpg/etc.
+// 
+// when retrieving list of all items
+//   SMEMBERS item/all => [replies]
+//   MGET [replies]
+//
 // 
 ////////////////////////////////////////
 ////////////////////////////////////////
@@ -41,14 +71,16 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //     SADD user/all 1         // add user ID to set of all user IDs
 //
 //   Set the user account type
-//     SET user/1/acct
+//     SET user/1/acct [twitter|facebook|google]
 //
-//   Set user data
-//     SET user/1/first_name Pete
-//     SET user/1/last_name Rogers
-//     SET user/1/username petey54
-//     SET user/1/champion/weapon sword
-//     SET user/1/champion/armor chainmail
+//   Create the user's first champion
+//
+//     Increment champion ID (CID)
+//       INCR champ/uids
+//
+//     Set champion data
+//       SET champion/n/weapon sword
+//       SET champion/n/armor chainmail
 //
 //
 // Look up a user
@@ -89,6 +121,36 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 // Get UID using Google ID n
 //   user/google/n/uid
 //
+//
+// Create an item
+//   incr item/index    // use the returned value for the new item number
+//   zadd item/weapon
+//
+
+
+/**
+ * asyncLoop
+ *
+ * A crazy insane inception function to run an event-driven asyncronous loop
+ * by wilsonpage http://stackoverflow.com/users/516629/wilsonpage
+ * http://stackoverflow.com/a/7654602
+ *
+ * @param {object} o       object containing...
+ *                         {int} length   number of iterations to do
+ *                         {func} functionToLoop  the function to loop
+ *                         {callback} what to do once done looping
+ */
+var asyncLoop = function(o) {
+    var i = -1;
+    
+    var loop = function() {
+        i++;
+        if (i == o.length) { o.callback(); return; }
+        o.functionToLoop(loop, i);
+        console.log(' ||| i:' + i + ' o.length:' + o.length + ' |||');
+    }
+    loop(); //init
+}
 
 
 /**
@@ -101,6 +163,8 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
  */
 var isAdmin = function(uid, callback) {
     client.SISMEMBER('admin/all', uid, function(err, member) {
+        console.log('checking to see if user ' + uid + ' is an admin');
+        console.dir(uid);
         if (err) callback(true, null);
         callback(null, member);
     });
@@ -219,23 +283,101 @@ var findOrCreateTwitter = function(tuid, callback) {
 }
 
 /**
- * getUser
- * 
- * Gets all user keys from the redis db
+ * getAllChampions
  *
- * So that's like user's username, name, gold in their bank,
+ * Gets an object containing objects for every champion in the LARP.
+ *
+ * @callback done          called back with (err, champs)
+ */
+var getAllChampions = function(done) {
+
+    var champs = {};
+    
+    // get total number of champions in the LARP
+    client.GET('champion/uids', function(err, total) {
+        if (err) throw err;
+        if (total == null) { console.log("ERROR: There are no champions"); }
+        console.log('total is: ' + total);
+
+        
+        asyncLoop({
+            length: total,
+            
+            functionToLoop: function(loop, i) {
+                var champion = i + 1; // little offset cuz asyncloop is craycray
+                getChampion(champion, function(err, champstats) {
+                    console.log('got champion ' + champion + ':');
+                    console.dir(champstats);
+
+                    // stuff each champion object into the champs object
+                    // containing all champions
+                    champs[champion] = champstats;
+                    console.dir(champs);
+
+                    loop(); // loop through all champions until done
+                });
+            },
+
+            callback: function() {
+                done(null, champs);
+            }
+        });
+
+
+//         for (var champion=1; champion<=total; champion++) {
+//             console.log('lets kick off a getChampion with champ iterator: ' + champion); //a
+//             getChampion(champion, function(err, champstats) { //b, d
+
+//                 console.log('got champion ' + champion + ':');
+//                 console.dir(champstats);
+
+//                 // stuff each champion object into the champs object
+//                 // containing all champions
+// //                console.log('getting champion ' + champion);
+
+//                 // get here before callback
+//                 // don't callback until got
+//                 champs[champion] = champstats;
+//                 console.dir(champs);
+//             });
+            
+//             if (champion == total) {
+//                 console.log('champs.length: ' + champs.length + ' | total: ' + total + ' | champion: ' + champion); //c
+//                 if (champs == total) {
+                    
+//                     console.log('here are ALL DA CHAMPS: >>');
+//                     console.dir(champs);
+                
+//                     callback(null, champs);
+//                 }
+//             }
+//         }
+    });
+}
+
+        
+               
+    
+    
+
+
+/**
+ * getChampion
+ * 
+ * Gets all champion key/value pairs from the redis db
+ *
+ * So that's like user's LARP champion name, race, stats, gold in their bank,
  * items in their inventory, etc.
  *
  * @param int requesteduser    user id number (UID)
- * @callback callback          called back with (err, userstats)
+ * @callback callback          called back with (err, champstats)
  */
-var getUser = function(requesteduser, callback) {
+var getChampion = function(requestedchampion, callback) {
 
-    var userstats = {};
-    console.log('user::getUser requested user: ' + requesteduser);
-    console.dir(requesteduser);
+    var champstats = {};
+    console.log('user::getChampion requested champion: ' + requestedchampion);
     
-    client.KEYS('user/' + requesteduser + '/*', function(err, replies) {
+    client.KEYS('champion/' + requestedchampion + '/*', function(err, replies) {
         if (err) throw err;
         if (replies != "") {
             console.log('replies:::: ' + replies);
@@ -248,12 +390,24 @@ var getUser = function(requesteduser, callback) {
                     // get the key name so we can populate a js object
                     var n = reply.lastIndexOf('/');
                     var key = reply.substring(n + 1, reply.length);
-                    userstats[key] = value;
+                    champstats[key] = value;
 
                     //                console.log('here:');
-                    //                console.dir(userstats);
+                    console.dir(champstats);
+
+                    // calls back with champstats looking like:
+                    //
+                    // { 
+                    //   name: 'NiPtune the Copycat',
+                    //   pic: 'oiJFJfjewaoifjoiJOIDJFijeoifjd',
+                    //   xp: '4',
+                    //   race: 'CPU'
+                    //   
+                    // }
+                    //
+                    
                     if (i == replies.length-1) {
-                        callback(null, userstats);
+                        callback(null, champstats);
                     }
                 });
             });
@@ -268,7 +422,8 @@ var getUser = function(requesteduser, callback) {
 module.exports = {
     createTwitter: createTwitter,
     findOrCreateTwitter: findOrCreateTwitter,
-    getUser: getUser,
+    getChampion: getChampion,
+    getAllChampions: getAllChampions,
     getUserType: getUserType,
     isAdmin: isAdmin
 }

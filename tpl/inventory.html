@@ -77,27 +77,10 @@
     <div class="col-lg-6">
       <div class="well">
         <p>Character</p>
-        <p>{{ user.name }}</p>
+        <p>{{ champion.name }}</p>
       </div>
     </div>
     <div class="col-lg-6">
-      <div class="well">
-        <p>Inventory</p>
-        <div class="grid-container">
-          <div>Child Element 1</div>
-          <div>Child Element 2</div>
-          <div>Child Element 3</div>
-          <div>Child Element 4</div>
-          <div>Child Element 5</div>
-          <div>Child Element 6</div>
-          <div>Child Element 7</div>
-          <div>Child Element 8</div>
-          <div>Child Element 9</div>
-          <div>Child Element 10</div>
-          <div>Child Element 11</div>
-          <div>Child Element 12</div>
-        </div>
-        <p>helo</p>
     </div>
   </div>
 
@@ -137,7 +120,7 @@
         {{ aBox("Bank") }}
       </div>
       <div class="col-md-3">
-        {{ aBox("Potion", user.potion) }}
+        {{ aBox("Potion", champion.potion) }}
       </div>
       <div class="col-md-3">
         {{ aBox("Legs") }}
