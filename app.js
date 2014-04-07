@@ -35,7 +35,7 @@ nunjucksEnv.express(app);
 
 // some expressy stuffy stuff
 app.use(express.cookieParser());
-//app.use(express.bodyParser()); 
+app.use(express.bodyParser()); 
 app.use(express.session({ secret: app.get('session_secret') }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -63,6 +63,7 @@ app.get('/test', function(req, res) {
 
 // api endpoints
 require('./api/auth')(app);
+require('./api/keeper')(app);
 
 server.listen(port);
 console.log('server listening on port ' + port);

@@ -13,55 +13,56 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 ////////////////////////////////////////
 ////////////////////////////////////////
 //
-// users (n = UID) (user ID)
+// Foreword
+//
+// how to work with redis
+//
+//   - come up with the data you need to store
+//     - example: keeper
+//   - what data does keeper need to store in the db?
+//     - Name, race, experience points, hitpoints, inventory, etcetera.
+//     - come up with list (see below example, "chapions have:"
+//   - use a key as an index for all keepers
+//     ex: INCR keeper/index
+//   - does the keeper need to be in some sort of group?
+//     - make groups redis sets or ordered sets that contain
+//       an index to the keeper in that group
+//       ex: SADD keepergroup 1
+//
+//   
+///////////////////////////////////////////////////////////
+// Users and Keepers
+//
+// Users (n = UID) (user ID)
 //
 // (key) user/n/info1
 // (key) user/n/acct    // account type (twitter, facebook, or google)
 // (key) user/n/info3
 //
-// champions (n = CID) (champion ID)
-// (key) champion/n/inv/weapon
-// (key) champion/n/inv/helm
-// (key) champion/n/inv/armor
-// (key) champion/n/inv/boots
-// (key) champion/n/stats/level
-//
-// admins. UIDs in this set are allowed admin access
-// 
-// (set) admin/all
-//
-//
-// Items
-// (key) item/index  // an index for item ID numbers
-// (sorted set) item/weapon
-// (sorted set) item/potion
-// (sorted set) item/tool
-//
-// items have:
+// keepers have:
 //   - name
-//   - description
-//   - picture
-//   - stats (@todo future)
-//     - attack
-//     - defense
-//     - durability
+//   - biography
+//   - stats
+//     - xp
+//     - hp
+//     - class
+//     - race
+//   - equipped items
+//     - items equipped modify stats
+//   - inventory
+//     - contains items
+//     - contains money
 //
-// item/index             an index of all item ID numbers (iid)
-// item/all               a set containing all IIDs.
-// item/weapon            a set of item numbers belonging to the weapon group
-// item/consumable        a set of iids belonging to the consumable group
-//
-// item/iid/name          (key) name of item
-// item/iid/description   (key) description of item
-// item/iid/picture       base64 encoded png/jpg/etc.
-// 
-// when retrieving list of all items
-//   SMEMBERS item/all => [replies]
-//   MGET [replies]
-//
-// 
-////////////////////////////////////////
-////////////////////////////////////////
+//  (key)  keeper/KID/name
+//  (key)  keeper/KID/bio
+//  (key)  keeper/KID/stats/xp
+//  (key)  keeper/KID/stats/hp
+//  (key)  keeper/KID/stats/class
+//  (key)  keeper/KID/stats/race
+//  (zset) keeper/KID/equipped     (ordered set of equipped iids) 
+//  (zset) keeper/KID/inventory    (ordered set of iids in inventory)
+//  (key)  keeper/KID/money
+//  
 //
 // Create a user
 //   Increment user ID (UID)
@@ -73,17 +74,29 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //   Set the user account type
 //     SET user/1/acct [twitter|facebook|google]
 //
-//   Create the user's first champion
+//   Create the user's first keeper
 //
-//     Increment champion ID (CID)
-//       INCR champ/uids
+//     Get keeper ID (KID) by incrementing keeper index
+//       INCR keeper/index => KID
 //
-//     Set champion data
-//       SET champion/n/weapon sword
-//       SET champion/n/armor chainmail
+//     Set initial keeper data
+//       SET keeper/KID/stats/xp [value of keeper/default/stats/xp]
+//       SET keeper/KID/stats/hp [value of keeper/default/stats/xp]
+//       SET keeper/KID/money [value of keeper/default/money]
+//
+//     Add keeper to active group
+//       SADD keeper/active KID
 //
 //
-// Look up a user
+// Get a Keeper's basic info
+//   GET keeper/KID/name
+//   GET keeper/KID/race
+//   GET keeper/KID/class
+//   GET keeper/KID/stats/xp
+//   GET keeper/KID/stats/hp
+//   GET keeper/KID/money
+//  
+//   
 //   KEYS user/x/*             // (inject user's ID at x)
 //   1) user/x/first_name
 //   2) user/x/last_name
@@ -106,11 +119,6 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //
 // Add user 1 to twitter account
 //   user
-//   
-//
-// Show all admin IDs
-//   SMEMBERS admin/all
-//
 //
 // Get UID using twitter ID
 //   user/twitter/27835703/uid => 1
@@ -122,9 +130,63 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //   user/google/n/uid
 //
 //
+/////////////////////////////////////////////////////////////
+// Admins. UIDs in this set are allowed admin access
+// 
+// (set) admin/all
+//
+//
+// Show all admin IDs
+//   SMEMBERS admin/all
+//
+//
+/////////////////////////////////////////////////////////////
+// Bank
+// 
+// Holds money for keepers
+//
+// (key) bank/KID/money
+//
+//
+/////////////////////////////////////////////////////////////
+// Items
+// (key) item/index  // an index for item ID numbers
+// (sorted set) item/weapon
+// (sorted set) item/potion
+// (sorted set) item/tool
+//
+// items have:
+//   - name
+//   - description
+//   - picture
+//   - stats that augment the player's own stats (@todo future)
+//     - attack
+//     - defense
+//     - durability
+//
+// item/index             an index of all item ID numbers (iid)
+// item/all               a set containing all IIDs.
+// item/weapon            a set of item numbers belonging to the weapon group
+// item/consumable        a set of iids belonging to the consumable group
+//
+// item/iid/name             (key) name of item
+// item/iid/description      (key) description of item
+// item/iid/picture          base64 encoded png/jpg/etc.
+// item/iid/stat/attack      attack statistic      (@todo future)
+// item/iid/stat/defense     defense statistic     (@todo future)
+// item/iid/stat/durability  durability statistic  (@todo future)
+// 
+// Retrieving list of all items
+//   SMEMBERS item/all => [replies]
+//   MGET [replies]
+//
 // Create an item
 //   incr item/index    // use the returned value for the new item number
 //   zadd item/weapon
+// 
+// 
+////////////////////////////////////////
+////////////////////////////////////////
 //
 
 
@@ -144,6 +206,7 @@ var asyncLoop = function(o) {
     var i = -1;
     
     var loop = function() {
+        if (o.length == null) throw 'asyncLoop cannot have a null length';
         i++;
         if (i == o.length) { o.callback(); return; }
         o.functionToLoop(loop, i);
@@ -222,22 +285,120 @@ var createTwitter = function(tuid, callback) {
     //     SET user/1/last_name Rogers
     //     SET user/1/username petey54
 
+
     // generate a new UID
-    client.INCR('user/uids', function(err, uid) {
-
-        console.log(' >> CREATING: ' + uid);
-        // add uid to set containing all UIDs
-        client.SADD('user/all', uid);
-
-        // set the user account type to twitter
+    createUID(function(err, uid) {
+        // set user acct type to twitter
         client.SET('user/' + uid + '/acct', 'twitter');
 
         // associate UID with TUID
         client.SET('user/twitter/' + tuid + '/uid', uid);
 
+        // create user's first keeper
+        createKeeper(uid, function(err, kid) {
+            callback(null, uid);
+        });
+    });
+}
+
+
+var createKeeper = function(uid, callback) {
+    client.INCR('keeper/index', function(err, kid) {
+        client.SET('keeper/' + kid + '/owner', uid);
+
+        // set some default values
+        client.MGET('keeper/default/money',
+                    'keeper/default/stats/xp',
+                    'keeper/default/stats/hp',
+                    function(err, results) {
+
+                        client.set('keeper/' + kid + '/money', results[0]);
+                        client.set('keeper/' + kid + '/stats/xp', results[1]);
+                        client.set('keeper/' + kid + '/stats/hp', results[2]);
+
+                        callback(null, kid);
+                    });
+    });
+}
+ 
+   
+var getKeeperDefaults = function(callback) {
+    client.MGET('keeper/default/money',
+                'keeper/default/stats/xp',
+                'keeper/default/stats/hp',
+
+                function(err, replies) {
+                    callback(null, replies);
+                });
+}
+        
+
+
+//  (key)  keeper/KID/name
+//  (key)  keeper/KID/bio
+//  (key)  keeper/KID/stats/xp
+//  (key)  keeper/KID/stats/hp
+//  (key)  keeper/KID/stats/class
+//  (key)  keeper/KID/stats/race
+//  (zset) keeper/KID/equipped     (ordered set of equipped iids) 
+//  (zset) keeper/KID/inventory    (ordered set of iids in inventory)
+//  (key)  keeper/KID/money
+//}
+    
+
+/**
+ * createUID
+ *
+ * Creates a new user ID number in the redis db
+ *
+ * @callback callback    (err, uid)
+ */
+var createUID = function(callback) {
+    client.INCR('user/index', function(err, uid) {
+        if (err) throw err;
+
+        // add uid to set containing all UIDs
+        client.SADD('user/all', uid);
+
+        // if this is the first user, make then an admin
+        if (uid == 1) {
+            client.SADD('user/admin', uid);
+        }
+
         callback(null, uid);
     });
 }
+
+
+/**
+ * createKID
+ *
+ * Creates a new keeper ID number in the redis db
+ *
+ * @callback callback   (err, kid)
+ */
+var createKID = function(callback) {
+    client.INCR('keeper/index', function(err, kid) {
+        client.SADD('keeper/all', kid);
+        callback(null, kid);
+    });
+}
+
+/**
+ * createIID
+ *
+ * Creates a new item ID number in the redis db
+ *
+ * @callback callback   (err, iid)
+ */
+var createIID = function(callback) {
+    client.INCR('item/index', function(err, iid) {
+        client.SADD('item/all', iid);
+        callback(null, iid);
+    });
+}
+
+
 
 
 var testCall = function(callback) {
@@ -283,20 +444,20 @@ var findOrCreateTwitter = function(tuid, callback) {
 }
 
 /**
- * getAllChampions
+ * getAllKeepers
  *
- * Gets an object containing objects for every champion in the LARP.
+ * Gets an object containing objects for every keeper in the LARP.
  *
- * @callback done          called back with (err, champs)
+ * @callback done          called back with (err, keepers)
  */
-var getAllChampions = function(done) {
+var getAllKeepers = function(done) {
 
-    var champs = {};
+    var keepers = {};
     
-    // get total number of champions in the LARP
-    client.GET('champion/uids', function(err, total) {
+    // get total number of keepers in the LARP
+    client.GET('keeper/index', function(err, total) {
         if (err) throw err;
-        if (total == null) { console.log("ERROR: There are no champions"); }
+        if (total == null) { console.log("ERROR: There are no keepers"); }
         console.log('total is: ' + total);
 
         
@@ -304,54 +465,24 @@ var getAllChampions = function(done) {
             length: total,
             
             functionToLoop: function(loop, i) {
-                var champion = i + 1; // little offset cuz asyncloop is craycray
-                getChampion(champion, function(err, champstats) {
-                    console.log('got champion ' + champion + ':');
-                    console.dir(champstats);
+                var keeper = i + 1; // little offset cuz asyncloop is craycray
+                getKeeper(keeper, function(err, keeperstats) {
+                    console.log('got keeper ' + keeper + ':');
+                    console.dir(keeperstats);
 
-                    // stuff each champion object into the champs object
-                    // containing all champions
-                    champs[champion] = champstats;
-                    console.dir(champs);
+                    // stuff each keeper object into the champs object
+                    // containing all keepers
+                    keepers[keeper] = keeperstats;
+                    console.dir(keepers);
 
-                    loop(); // loop through all champions until done
+                    loop(); // loop through all keepers until done
                 });
             },
 
             callback: function() {
-                done(null, champs);
+                done(null, keepers);
             }
         });
-
-
-//         for (var champion=1; champion<=total; champion++) {
-//             console.log('lets kick off a getChampion with champ iterator: ' + champion); //a
-//             getChampion(champion, function(err, champstats) { //b, d
-
-//                 console.log('got champion ' + champion + ':');
-//                 console.dir(champstats);
-
-//                 // stuff each champion object into the champs object
-//                 // containing all champions
-// //                console.log('getting champion ' + champion);
-
-//                 // get here before callback
-//                 // don't callback until got
-//                 champs[champion] = champstats;
-//                 console.dir(champs);
-//             });
-            
-//             if (champion == total) {
-//                 console.log('champs.length: ' + champs.length + ' | total: ' + total + ' | champion: ' + champion); //c
-//                 if (champs == total) {
-                    
-//                     console.log('here are ALL DA CHAMPS: >>');
-//                     console.dir(champs);
-                
-//                     callback(null, champs);
-//                 }
-//             }
-//         }
     });
 }
 
@@ -362,68 +493,49 @@ var getAllChampions = function(done) {
 
 
 /**
- * getChampion
+ * getKeeper
  * 
- * Gets all champion key/value pairs from the redis db
+ * Gets basic keeper info from the redis db
  *
- * So that's like user's LARP champion name, race, stats, gold in their bank,
+ * So that's like user's LARP keeper name, race, stats, gold in their bank,
  * items in their inventory, etc.
  *
- * @param int requesteduser    user id number (UID)
- * @callback callback          called back with (err, champstats)
+ * @param int kid              keeper id number (KID)
+ * @callback callback          called back with (err, keeperstats)
  */
-var getChampion = function(requestedchampion, callback) {
+var getKeeper = function(kid, callback) {
 
-    var champstats = {};
-    console.log('user::getChampion requested champion: ' + requestedchampion);
+    var keeperstats = {};
+    console.log('user::getKeeper requested keeper: ' + kid);
     
-    client.KEYS('champion/' + requestedchampion + '/*', function(err, replies) {
-        if (err) throw err;
-        if (replies != "") {
-            console.log('replies:::: ' + replies);
+    client.MGET(
+        'keeper/' + kid + '/name',
+        'keeper/' + kid + '/race',
+        'keeper/' + kid + '/class',
+        'keeper/' + kid + '/stats/xp',
+        'keeper/' + kid + '/stats/hp',
+        'keeper/' + kid + '/money',
 
-            // client.MGET is something that could replace the forEach.
+        function(err, replies) {
+            if (err) throw err;
+            // populate js object with replies
+            keeperstats['name'] = replies[0];
+            keeperstats['race'] = replies[1];
+            keeperstats['class'] = replies[2];
+            keeperstats['xp'] = replies[3];
+            keeperstats['hp'] = replies[4];
+            keeperstats['money'] = replies[5];
 
-            replies.forEach(function (reply, i) {
-                client.GET(reply, function(err, value) {
-                    console.log('reply:::: \'' + reply + '\'');
-                    // get the key name so we can populate a js object
-                    var n = reply.lastIndexOf('/');
-                    var key = reply.substring(n + 1, reply.length);
-                    champstats[key] = value;
-
-                    //                console.log('here:');
-                    console.dir(champstats);
-
-                    // calls back with champstats looking like:
-                    //
-                    // { 
-                    //   name: 'NiPtune the Copycat',
-                    //   pic: 'oiJFJfjewaoifjoiJOIDJFijeoifjd',
-                    //   xp: '4',
-                    //   race: 'CPU'
-                    //   
-                    // }
-                    //
-                    
-                    if (i == replies.length-1) {
-                        callback(null, champstats);
-                    }
-                });
-            });
-        } else {
-            console.log('user thingy is empty');
-            callback(true, null);
-        }
-    });
+            callback(null, keeperstats);
+        });
 }
 
 
 module.exports = {
-    createTwitter: createTwitter,
     findOrCreateTwitter: findOrCreateTwitter,
-    getChampion: getChampion,
-    getAllChampions: getAllChampions,
+    getKeeper: getKeeper,
+    getKeeperDefaults: getKeeperDefaults,
+    getAllKeepers: getAllKeepers,
     getUserType: getUserType,
     isAdmin: isAdmin
 }

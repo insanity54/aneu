@@ -49,7 +49,7 @@ var routes = function(app) {
      */
     app.get('/admin', function(req, res) {
         // if session exists
-        if (req.user) {
+        if (req.isAuthenticated()) {
             console.log('session exists');
                 
             db.isAdmin(req.user, function(err, admin) {
@@ -58,11 +58,18 @@ var routes = function(app) {
                     // user is in admin group
                     console.log('user is in admin group');
 
-                    db.getAllChampions(function(err, champions) {
-                        console.log('got all champs: ');
-                        console.dir(champions);
-                        console.log('champ1 sword: ' + champions[1].sword);
-                        res.render('admin.html', {champions: champions});
+                    // get default configurations
+                    db.getKeeperDefaults(function(err, configs) {
+                        if (err) throw err;
+
+                        db.getAllKeepers(function(err, keepers) {
+                            console.log('got all champs: ');
+                            console.dir(keepers);
+                            console.log('champ1 sword: ' + keepers[1].sword);
+                            res.render('admin.html',
+                                       { keepers: keepers,
+                                         configs: configs });
+                        });
                     });
 
                 } else {
@@ -87,19 +94,19 @@ var routes = function(app) {
         // @todo we want to be able to use a username instead of a UID
         // get username from URL (^requser)
         // from username get UID (db.getUid)
-        // use UID to get user object (db.getChampion)
+        // use UID to get user object (db.getKeeper)
 
         // work with redis to get user object
-        db.getChampion(requser, function (err, champion) {
+        db.getKeeper(requser, function (err, keeper) {
             if (err) {
                 console.log('error interacting with redis');
                 res.send('no such user');
                 
             } else {
                 console.log('no errs interacting with redis');
-                console.dir(champion);
+                console.dir(keeper);
                 res.render('inventory.html',
-                           { champion: champion,
+                           { keeper: keeper,
                              title: title,
                              subtitle: subtitle
                            });

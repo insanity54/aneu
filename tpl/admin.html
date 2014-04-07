@@ -1,0 +1,167 @@
+{% extends "main.html" %}
+
+{# bootstrap tabs #}
+<script type="text/javascript" src="custom.js"></script>
+
+{% macro aBox(title, value, pic="http://placekitten.com/100/100" ) %}
+<div class="well">
+  <p>
+  {% if value %}
+    <span class="label label-primary">
+  {% else %}
+    <span class="label label-default">
+  {% endif %}
+    {{ title }}
+    </span>
+    {{ value }}
+  </p>
+  <img src={{ pic }}/>
+</div>
+{% endmacro %}
+
+
+{% block center %}
+
+<div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">{{ title }}</a>
+      
+    </div><!-- /.container -->
+</div><!-- /.navbar -->
+  
+<!-- HEADER 
+=================================-->
+
+<div class="jumbotron text-center">
+    <div class="container">
+      <div class="row">
+        <div class="col col-lg-12 col-sm-12">
+          <h1>{{ title }}</h1>
+          <p>{% if subtitle %}{{ subtitle }}{% else %}insert subtitle here{% endif %}</p>
+          
+        </div>
+      </div>
+    </div> 
+</div>
+<!-- /header container-->
+
+<!-- CONTENT
+=================================-->
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="well">
+        <div class="list-group">
+          {# test list of all elements of user object #}
+          <ul>
+            <li class="list-group-item">test</li>
+            {% for attribute in user %}
+            <li class="list-group-item">{{ attribute }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="well">
+        <div class="tabbable">
+          <ul id="sections" class="nav nav-pills">
+            <li class="active"><a href="#keeper" data-toggle="pill"><i class="icon-sword"></i> Keepers</a></li>
+            <li><a href="#user" data-toggle="pill"><i class="icon-user"></i> Users</a></li>
+            <li><a href="#item" data-toggle="pill"><i class="icon-pixelwand"></i> Items</a></li>
+            <li><a href="#quest" data-toggle="pill"><i class="icon-pixelchest"></i> Quests</a></li>
+            <li><a href="#achievement" data-toggle="pill"><i class="icon-warmedalalt"></i> Achievements</a></li>
+            <li><a href="#bank" data-toggle="pill"><i class="icon-moneybag"></i> Bank</a></li>
+          </ul>
+        
+          <div class="tab-content">
+            <div id="keeper" class="tab-pane active">
+              {# table with headings: #}
+              {#   - Champ name       #}
+              {#   - Champ picture    #}
+              {#   - Champ XP         #}
+              {#   - Champ race       #}
+
+              <h4>Keeper Defaults</h4>
+              <table id="table-keeper-defaults" class="table table-bordered table-striped" style="clear: both">
+                <tbody>
+                  <tr>
+                    <td>Money</td>
+                    <td><a href="#" id="keeper-default-money" class="editable editable-click">{{ configs[0] }}</td>
+                  </tr>
+                  <tr>
+                    <td>XP</td>
+                    <td><a href="#" id="keeper-default-xp" class="editable editable-click">{{ configs[1] }}</td>
+                  </tr>
+                  <tr>
+                    <td>HP</td>
+                    <td><a href="#" id="keeper-default-hp" class="editable editable-click">{{ configs[2] }}</td>
+                </tbody>
+              </table>
+
+              <h4>Keeper List</h4>
+
+              <table id="table-keeper" class="table table-bordered table-striped" style="clear: both">
+                <tbody>
+                  <tr>
+                    <th>UID</th>
+                    <th>Name</th>
+                    <th>XP</th>
+                    <th>HP</th>
+                    <th>Money</th>
+                  {% for cid, attributes in champions %}
+                    <tr>
+                      <td>{{ cid }}</td>
+
+                      {% for attribute in attributes %}
+                        <td>
+                          {{ attribute }}
+                        </td>
+                      {% endfor %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <div id="user" class="tab-pane">
+              <h4>Users</h4>
+            </div>
+
+            <div id="item" class="tab-pane">
+              <h4>Items</h4>
+            </div>
+
+            <div id="quest" class="tab-pane">
+              <h4>Quests</h4>
+            </div>
+
+            <div id="bank" class="tab-pane">
+              <h4>Bank</h4>
+            </div>
+
+          </div>{# /.tabbable #}
+        </div>{# /.pill-content #}
+      </div>{# /.well #}
+    </div>{# /.col-lg-6 #}
+  </div>
+</div>
+<hr>
+<!-- /CONTENT ============-->
+
+{% endblock %}
