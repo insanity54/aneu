@@ -9,9 +9,9 @@ var keeper = function(app) {
 
     
     /**
-     * admin is posting the starting money amount for new champions
+     * admin is posting the starting money amount for new keepers
      */
-    app.post('/api/champion/default/money', function(req, res) {
+    app.post('/api/keeper/default/money', function(req, res) {
 
         console.log('req-------- ' + req.body.value);
         console.dir(req.body);
@@ -26,7 +26,7 @@ var keeper = function(app) {
                     console.log('requester is admin');
                     
                     // post the value from the db
-                    db.SET('champion/default/money', req.body.value, function(reply, reply2) {
+                    db.SET('keeper/default/money', req.body.value, function(reply, reply2) {
                         console.log('redis reply: ' + reply + ' and2: ' + reply2);
                         res.send(200);
                     });
@@ -37,7 +37,7 @@ var keeper = function(app) {
 
 
     /**
-     * admin is posting the starting xp amount for new champions
+     * admin is posting the starting xp amount for new keepers
      */
     app.post('/api/keeper/default/stats/xp', function(req, res) {
         

@@ -58,11 +58,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
+
+    {% include "navigation.html" %}
+    
     {% block header %}
     This is the default content
     {% endblock %}
 
-    <section class="left">
+    <section class="navigation">
       {% block left %}{% endblock %}
     </section>
 

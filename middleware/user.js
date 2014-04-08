@@ -31,13 +31,8 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //
 //   
 ///////////////////////////////////////////////////////////
-// Users and Keepers
+// Keepers and users
 //
-// Users (n = UID) (user ID)
-//
-// (key) user/n/info1
-// (key) user/n/acct    // account type (twitter, facebook, or google)
-// (key) user/n/info3
 //
 // keepers have:
 //   - name
@@ -64,9 +59,15 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //  (key)  keeper/KID/money
 //  
 //
+// Users (n = UID) (user ID)
+//
+// (key) user/n/acct      // account type (twitter, facebook, or google)
+// (set) user/n/keepers   // set of keeper ID numbers that the user owns
+//
+//
 // Create a user
 //   Increment user ID (UID)
-//     INCR user/uids
+//     INCR user/index
 //
 //   Add UID to set containing all UIDs
 //     SADD user/all 1         // add user ID to set of all user IDs
@@ -225,7 +226,7 @@ var asyncLoop = function(o) {
  * @callback            called when result is found ({bool} err, {bool} member)
  */
 var isAdmin = function(uid, callback) {
-    client.SISMEMBER('admin/all', uid, function(err, member) {
+    client.SISMEMBER('user/admin', uid, function(err, member) {
         console.log('checking to see if user ' + uid + ' is an admin');
         console.dir(uid);
         if (err) callback(true, null);
@@ -275,7 +276,7 @@ var createTwitter = function(tuid, callback) {
 
     // Create a user
     //   Increment user ID (UID)
-    //     INCR user/uids
+    //     INCR user/index
     //
     //   Add UID to set containing all UIDs
     //     SADD user/all 1         // add user ID to set of all user IDs
@@ -316,6 +317,9 @@ var createKeeper = function(uid, callback) {
                         client.set('keeper/' + kid + '/stats/xp', results[1]);
                         client.set('keeper/' + kid + '/stats/hp', results[2]);
 
+                        // add keeper to user's keeper list
+                        client.set('user/' + uid + '/keepers', kid);
+
                         callback(null, kid);
                     });
     });
@@ -331,20 +335,7 @@ var getKeeperDefaults = function(callback) {
                     callback(null, replies);
                 });
 }
-        
-
-
-//  (key)  keeper/KID/name
-//  (key)  keeper/KID/bio
-//  (key)  keeper/KID/stats/xp
-//  (key)  keeper/KID/stats/hp
-//  (key)  keeper/KID/stats/class
-//  (key)  keeper/KID/stats/race
-//  (zset) keeper/KID/equipped     (ordered set of equipped iids) 
-//  (zset) keeper/KID/inventory    (ordered set of iids in inventory)
-//  (key)  keeper/KID/money
-//}
-    
+            
 
 /**
  * createUID
@@ -362,6 +353,7 @@ var createUID = function(callback) {
 
         // if this is the first user, make then an admin
         if (uid == 1) {
+            console.log('first user created, making them an admin');
             client.SADD('user/admin', uid);
         }
 
@@ -402,7 +394,7 @@ var createIID = function(callback) {
 
 
 var testCall = function(callback) {
-    client.INCR('user/uids', function(err, uid) {
+    client.INCR('user/index', function(err, uid) {
         console.log('testCall: ' + uid);
         callback(null, uid);
     });

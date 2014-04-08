@@ -78,6 +78,7 @@ var routes = function(app) {
             });
         } else {
             console.log('session does not exist');
+            res.send(401);
         }
     });
 
