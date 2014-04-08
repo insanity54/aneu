@@ -1,7 +1,7 @@
-aneu
+David's LARP
 ====
 
-mucking about
+A webapp for David's LARP
 
 
 
