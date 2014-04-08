@@ -113,17 +113,20 @@
                     <th>XP</th>
                     <th>HP</th>
                     <th>Money</th>
-                  {% for cid, attributes in champions %}
-                    <tr>
-                      <td>{{ cid }}</td>
+                  </tr>
+                    
 
-                      {% for attribute in attributes %}
-                        <td>
-                          {{ attribute }}
-                        </td>
-                      {% endfor %}
-                    </tr>
+                  {% for kid, attr in keepers %}
+                  <tr>
+                    <td>{{ kid }}</td>
+                    <td>{{ attr.name }}</td>
+                    <td>{{ attr.xp }}</td>
+                    <td>{{ attr.hp }}</td>
+                    <td>{{ attr.money }}</td>
+                  </tr>
                   {% endfor %}
+
+
                 </tbody>
               </table>
             </div>

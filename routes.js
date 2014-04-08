@@ -63,7 +63,7 @@ var routes = function(app) {
                         if (err) throw err;
 
                         db.getAllKeepers(function(err, keepers) {
-                            console.log('got all champs: ');
+                            console.log('got all keepers: ');
                             console.dir(keepers);
                             console.log('champ1 sword: ' + keepers[1].sword);
                             res.render('admin.html',

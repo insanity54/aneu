@@ -313,6 +313,8 @@ var createKeeper = function(uid, callback) {
                     'keeper/default/stats/hp',
                     function(err, results) {
 
+                        if (err) throw err;
+
                         client.set('keeper/' + kid + '/money', results[0]);
                         client.set('keeper/' + kid + '/stats/xp', results[1]);
                         client.set('keeper/' + kid + '/stats/hp', results[2]);
@@ -325,7 +327,14 @@ var createKeeper = function(uid, callback) {
     });
 }
  
-   
+/**
+ * getKeeperDefaults
+ *
+ * Gets keeper defaults from the databse.
+ * Runs every time a new keeper is created
+ *
+ * @callback callback      (err, replies)
+ */
 var getKeeperDefaults = function(callback) {
     client.MGET('keeper/default/money',
                 'keeper/default/stats/xp',
@@ -336,6 +345,21 @@ var getKeeperDefaults = function(callback) {
                 });
 }
             
+/**
+ * setKeeperDefaults
+ *
+ * Sets keeper defaults in the databse.
+ * This is only run once when the first user is created.
+ *
+ * @callback callback
+ */
+var setKeeperDefaults = function(callback) {
+    client.set('keeper/default/money', 1500);
+    client.set('keeper/default/stats/xp', 0);
+    client.set('keeper/default/stats/hp', 1);
+
+    callback(null);
+};
 
 /**
  * createUID
@@ -352,9 +376,13 @@ var createUID = function(callback) {
         client.SADD('user/all', uid);
 
         // if this is the first user, make then an admin
+        // and create some database defaults
         if (uid == 1) {
             console.log('first user created, making them an admin');
             client.SADD('user/admin', uid);
+            setKeeperDefaults(function(err) {
+                if (err) throw err;
+            });
         }
 
         callback(null, uid);

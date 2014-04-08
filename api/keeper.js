@@ -42,7 +42,6 @@ var keeper = function(app) {
     app.post('/api/keeper/default/stats/xp', function(req, res) {
         
         
-
     });
 
 
