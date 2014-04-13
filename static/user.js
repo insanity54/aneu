@@ -5,7 +5,7 @@ $.fn.editable.defaults.mode = 'inline';
 $(document).ready(function() {
 
     /**
-     * x-editable - set up and actiate x-editable elements
+     * x-editable - set up and activate x-editable elements
      */
     $('#keeper-default-money').editable({
         name: 'keepermoney',
@@ -40,12 +40,5 @@ $(document).ready(function() {
         emptytext: 'no'
     });
 
-
-    /**
-     * activate shapeshift grid
-     */
-    $(document).ready(function() {
-        $(".grid-container").shapeshift();
-    });
 });
 

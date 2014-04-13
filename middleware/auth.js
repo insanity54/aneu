@@ -7,20 +7,20 @@ console.log('MIDDLEWARE AUTH HAS BEEN CALLED !!!');
 // Serialize user object to the session
 // this is called on every authenticated request
 // and stores the identifying information in the sesion data
-passport.serializeUser(function(uid, done) {
+passport.serializeUser(function(profile, done) {
     console.log('ima serializeing 4 real');
-    console.dir(uid);
-    done(null, uid);
+    console.dir(profile);
+    done(null, profile);
 });
 
 
 // pull the cookie from the user's browser
 // using the cookie, find who it is that is visiting
 // pull that user's info from the db
-passport.deserializeUser(function(uid, done) {
-    console.log('ima 4real deserializin and the user id is ' + uid );
+passport.deserializeUser(function(profile, done) {
+    console.log('ima 4real deserializin and the user id is ' + profile );
     
-    done(null, uid);
+    done(null, profile);
 //    db.getChampion(uid, function (err, user) {
 //        if (err) throw err;
 //        if (!user) {

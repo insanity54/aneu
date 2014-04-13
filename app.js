@@ -27,6 +27,10 @@ app.set('subtitle', nconf.get('SUBTITLE'));
 app.set('session_secret', nconf.get('SESSION_SECRET'));
 app.set('twitter_consumer_key', nconf.get('TWITTER_CONSUMER_KEY'));
 app.set('twitter_secret_key', nconf.get('TWITTER_SECRET_KEY'));
+app.set('twitter_login_callback', nconf.get('TWITTER_LOGIN_CALLBACK'));
+app.set('facebook_app_id', nconf.get('FACEBOOK_APP_ID'));
+app.set('facebook_app_secret', nconf.get('FACEBOOK_APP_SECRET'));
+app.set('facebook_login_callback', nconf.get('FACEBOOK_LOGIN_CALLBACK'));
 app.set('redisserver', nconf.get('REDISSERVER'));
 
 // nunjucks templating
@@ -64,6 +68,7 @@ app.get('/test', function(req, res) {
 // api endpoints
 require('./api/auth')(app);
 require('./api/keeper')(app);
+require('./api/user')(app);
 
 server.listen(port);
 console.log('server listening on port ' + port);

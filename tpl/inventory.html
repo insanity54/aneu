@@ -44,6 +44,7 @@
       <div class="well">
         <div class="list-group">
           {# test list of all elements of user object #}
+          <p>@todo put alert from admin here</p>
           <ul>
             <li class="list-group-item">test</li>
             {% for attribute in user %}
@@ -65,61 +66,13 @@
   <div class="row">
     <div class="col-lg-6">
       <div class="well">
-        <p>Character</p>
-        <p>{{ champion.name }}</p>
+        <p>User</p>
+        <p>{{ keeper.name }}</p>
       </div>
     </div>
     <div class="col-lg-6">
     </div>
   </div>
-
-
-  <div class="row">
-    <div class="col-md-3">
-      {{ aBox("XP") }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("Special") }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("Head") }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("Special") }}
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="col-md-3">
-        {{ aBox("QR") }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("R Weapon") }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("Chest") }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("L Weapon") }}
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-3">
-        {{ aBox("Bank") }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("Potion", champion.potion) }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("Legs") }}
-      </div>
-      <div class="col-md-3">
-        {{ aBox("Potion") }}
-      </div>
-    </div>
-
-    <hr>
 </div>
 <hr>
 <!-- /CONTENT ============-->

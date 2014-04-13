@@ -1,10 +1,10 @@
 var redis = require('redis');
-var user = require('../middleware/user');
-var db = redis.createClient();
+var db = require('../middleware/user');
+var client = redis.createClient();
 
 var keeper = function(app) {
     // select the redis server number set in the app config file
-    db.select(app.get('redisserver'));
+    client.select(app.get('redisserver'));
     console.log('changing redis server to: ' + app.get('redisserver'));
 
     
@@ -25,8 +25,8 @@ var keeper = function(app) {
                     // user is admin
                     console.log('requester is admin');
                     
-                    // post the value from the db
-                    db.SET('keeper/default/money', req.body.value, function(reply, reply2) {
+                    // post the value from the client
+                    client.SET('keeper/default/money', req.body.value, function(reply, reply2) {
                         console.log('redis reply: ' + reply + ' and2: ' + reply2);
                         res.send(200);
                     });
@@ -44,13 +44,11 @@ var keeper = function(app) {
         
     });
 
-
-
 }
                                 
 module.exports = keeper;
 
-                 //   post the value to the db
+                 //   post the value to the client
                  // return OK
 
                  

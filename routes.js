@@ -66,9 +66,13 @@ var routes = function(app) {
                             console.log('got all keepers: ');
                             console.dir(keepers);
                             console.log('champ1 sword: ' + keepers[1].sword);
-                            res.render('admin.html',
-                                       { keepers: keepers,
-                                         configs: configs });
+
+                            db.getAllUsers(function(err, users) {
+                                res.render('admin.html',
+                                           { keepers: keepers,
+                                             users: users,
+                                             configs: configs });
+                            });
                         });
                     });
 
@@ -106,7 +110,7 @@ var routes = function(app) {
             } else {
                 console.log('no errs interacting with redis');
                 console.dir(keeper);
-                res.render('inventory.html',
+                res.render('user.html',
                            { keeper: keeper,
                              title: title,
                              subtitle: subtitle

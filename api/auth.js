@@ -1,5 +1,6 @@
 var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
 var db = require('../middleware/user');
 
 
@@ -55,11 +56,6 @@ var auth = function(app) {
         res.send(req.isAuthenticated() ? req.user : '0');
     });
 
-    // route to log in
-    // app.post('/api/auth/login', middleware.passport.authenticate('local'), function(req, res) {
-    //     res.send(req.user);
-    // });
-
     // route to log out
     app.post('/api/auth/logout', function(req, res) {
 	req.logOut();
@@ -69,7 +65,7 @@ var auth = function(app) {
     passport.use(new TwitterStrategy({
         consumerKey: app.get('twitter_consumer_key'),
         consumerSecret: app.get('twitter_secret_key'),
-        callbackURL: "http://dwane.co:8080/api/auth/twitter/callback"
+        callbackURL: app.get('twitter_login_callback')
     },
 
     // when user successfully authenticates with twitter, do this:
@@ -96,6 +92,46 @@ var auth = function(app) {
             done(null, uid);
         });
     }))
+
+    
+
+    /////////////////////
+    // Facebook login
+    /////////////////////
+    app.get('/api/auth/facebook', passport.authenticate('facebook'));
+
+    app.get('/api/auth/facebook/callback',
+            passport.authenticate('facebook'), 
+            function(req, res) {
+                console.log('auth.js::app.get - req.user:' + req.user); 
+                res.redirect('/user/' + req.user);
+            });
+           
+
+    passport.use(new FacebookStrategy({
+        clientID: app.get('facebook_app_id'),
+        clientSecret: app.get('facebook_app_secret'),
+        callbackURL: app.get('facebook_login_callback')
+    },
+    function(accessToken, refreshToken, profile, done) {
+
+        // we're going to use the facebook user id (fuid)
+        // to find our user id (uid)
+        var fuid = profile.id;
+        console.dir(fuid);
+        db.findOrCreateFacebook(fuid, function(err, uid) {
+            // done is a passport.js 'verify callback.'
+            // in a server exeption, set err to non-null value.
+            // in an auth failure, err remains null, and use
+            // final arg to pass additional details.
+            // more info: http://passportjs.org/guide/configure/
+
+            // @todo possibility for future: get user's facebook info we need
+            console.log('FUID: ' + fuid + ' => UID: ' + uid);
+            done(null, uid);
+        });
+    }))
+    
 }
 
 

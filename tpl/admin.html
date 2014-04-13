@@ -133,6 +133,29 @@
 
             <div id="user" class="tab-pane">
               <h4>Users</h4>
+
+              <table id="table-user" class="table table-bordered table-striped" style="clear: both">
+                <tbody>
+                  <tr>
+                    <th>UID</th>
+                    <th>Name</th>
+                    <th>Account type</th>
+                    <th>Admin?</th>
+                  </tr>
+                                      
+                  {% for uid, attr in users %}
+                  <tr>
+                    <td>{{ uid }}</td>
+                    <td>{{ attr.name }}</td>
+                    <td>{{ attr.acct }}</td>
+                    <td>
+                     <a href="#" data-pk="{{ uid }}">{{ attr.admin }}</a>
+                    </td>
+                  </tr>
+                  
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
 
             <div id="item" class="tab-pane">
@@ -141,6 +164,10 @@
 
             <div id="quest" class="tab-pane">
               <h4>Quests</h4>
+            </div>
+
+            <div id="achievement" class="tab-pane">
+              <h4>Achievements</h4>
             </div>
 
             <div id="bank" class="tab-pane">
