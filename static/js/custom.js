@@ -39,13 +39,5 @@ $(document).ready(function() {
         source: {'1': 'yes'},
         emptytext: 'no'
     });
-
-
-    /**
-     * activate shapeshift grid
-     */
-    $(document).ready(function() {
-        $(".grid-container").shapeshift();
-    });
 });
 

@@ -1,8 +1,8 @@
 // routes that the user can visit which display info to the user
 
 var passport = require('passport');
-var db = require('./middleware/user.js');
-
+var db = require('./middleware/user');
+var upload = require('./middleware/upload');
 
 
 
@@ -32,6 +32,45 @@ var routes = function(app) {
         });
     });
 
+    app.get('/test3', function(req, res) {
+
+        var mime = require('mime-magic');
+
+        mime('/home/grimtech/scripts/aneu/static/keeper.png', function(err, type) {
+            if (err) {
+                console.error(err.message);
+                res.send(err.message);
+
+            } else {
+                console.log('detected mime type: %s', type);
+                res.send('detected mime type: ' + type);
+
+            }
+        });
+    });
+            
+    /** 
+     * testing uploading of pictures
+     */
+    app.get('/testupload', function(req, res) {
+        var form="<!DOCTYPE HTML><html><body>" +
+"<form method='post' action='/upload' enctype='multipart/form-data'>" +
+"<input type='file' name='image'/>" +
+"<input type='submit' /></form>" +
+            "</body></html>";
+
+    });
+
+    
+    app.post('/upload',
+             upload.handleKeeperImage,
+             function(req, res) {
+
+                 console.log('this is only called upon SUCCEESSS');
+                 res.send(200);
+             });
+        
+
     app.get('/user/type', function(req, res) {
         db.getUserType(req.user, function(err, type) {
             
@@ -41,7 +80,9 @@ var routes = function(app) {
     /**
      * Root of the web app
      */
-    app.get('/', passport.authenticate('twitter'));
+    app.get('/', function(req, res) {
+        res.redirect('user/1');
+    });
 
 
     /**
@@ -101,7 +142,7 @@ var routes = function(app) {
         // from username get UID (db.getUid)
         // use UID to get user object (db.getKeeper)
 
-        // work with redis to get user object
+        // work with redis to get keeper object
         db.getKeeper(requser, function (err, keeper) {
             if (err) {
                 console.log('error interacting with redis');

@@ -1,0 +1,28 @@
+.grid-container {
+    border: 1px dashed #CCC;
+    position: relative;
+    width: 100%;
+}
+
+.grid-container > div {
+    height: 50px;
+    position: absolute;
+    width: 50px;
+}
+
+
+.bar {
+    height: 18px;
+    background: green;
+}
+
+div#keeper-image {
+    height: 200px;
+    width: 200px;
+    outline: 1px solid black;
+    background-image: url("/img/keeper.png");
+}
+
+.stretch {
+    background-size: 200px 200px;
+}

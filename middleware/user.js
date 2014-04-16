@@ -37,6 +37,7 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 // keepers have:
 //   - name
 //   - biography
+//   - image
 //   - stats
 //     - xp
 //     - hp
@@ -50,12 +51,13 @@ client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come
 //
 //  (key)  keeper/KID/name
 //  (key)  keeper/KID/bio
+//  (key)  keeper/KID/image      (a path to keeper's pic)
 //  (key)  keeper/KID/stats/xp
 //  (key)  keeper/KID/stats/hp
 //  (key)  keeper/KID/stats/class
 //  (key)  keeper/KID/stats/race
-//  (zset) keeper/KID/equipped     (ordered set of equipped iids) 
-//  (zset) keeper/KID/inventory    (ordered set of iids in inventory)
+//  (zset) keeper/KID/equips     (ordered set of equipped iids) 
+//  (zset) keeper/KID/items      (ordered set of iids in inventory)
 //  (key)  keeper/KID/money
 //  
 //
@@ -367,6 +369,8 @@ var createTwitter = function(tuid, callback) {
 
         // assiciate UID with TUID
         client.SET('user/twitter/' + tuid + '/uid', uid);
+
+        callback(null, uid);
     });
 }
 
@@ -443,6 +447,24 @@ var createKeeper = function(uid, callback) {
                     });
     });
 }
+
+/**
+ * addKeeperImage
+ *
+ * stores the path to a keeper image in the db
+ *
+ * @param {int} kid            the keeper ID number
+ * @param {String} image       a path to the keepers image
+ * @callback callback          (err, image)
+ */
+var addKeeperIMage = function(callback) {
+    client.SET('keeper/' + kid + '/image', image, function(err) {
+        if (err) throw err;
+        callback(err, image);
+    });
+}
+
+
  
 /**
  * getKeeperDefaults

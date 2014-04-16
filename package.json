@@ -23,9 +23,9 @@
     "nconf": "~0.6.9",
     "express": "~3.4.8",
     "redis": "~0.10.1",
-    "q": "~2.0.0",
-    "async": "~0.2.10",
     "nunjucks": "~1.0.1",
-    "passport-facebook": "~1.0.3"
+    "passport-facebook": "~1.0.3",
+    "mime-magic": "~5.14.0",
+    "jquery-file-upload-middleware": "~0.1.1"
   }
 }
