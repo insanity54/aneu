@@ -47,6 +47,15 @@ right here should be the thing
           <div class="col-lg-12">
             <div class="tabbable">
               <ul id="sections" class="nav nav-tabs">
+                
+                {# Keeper tabs, created programmatically
+                   depending on how many keepers the user has #}
+                <div id="keeper-tab"></div>
+
+
+
+
+                
                 <li class="active"><a href="#keeper1" data-toggle="tab"><i class="icon-sword"></i> Keeper1</a></li>
                 <li><a href="#keeper2" data-toggle="tab"><i class="icon-sword"></i> Keeper2</a></li>
               </ul>
@@ -54,93 +63,89 @@ right here should be the thing
           </div>   {# /.col-lg-12 #}
         </div>     {# /.row #}
 
-        {# row for stats and inventory #}
+
+        {# keeper tab content #}
         <div class="tab-content">
           <div class="tab-pane active" id="keeper1">
-            <h2>keeper1</h2>
+
+            {# image and QR row #}
             <div class="row">
 
-              {# image upload #}
-              <div class="col-sm-6">
+              {# image display / image upload #}
+              <div class="col-xs-6">
                 <img src="{{ keeper.image }}" />
-
                 <div id="keeper-image" class="stretch"></div>
               </div>
 
-
-              <div class="col-sm-6">
-                <p>QR</p>
+              {# QR Code #}
+              <div class="col-xs-6">
+                <img src="http://lorempixum.com/200/200/abstract/3" />
                 <img src="{{ keeper.qr }}" />
               </div>
+            </div> {# /.row #}
 
-              <div class="col-lg-12">
-                <h3>Grimnok Fiddlestick</h3>
+            {# row containing name, stats, and bio #}
+            <div class="row">
+              <div class="col-lg-6">
                 <div class="row">
-                  {# Name #}
-                  <div class="col-lg-6">
-                    <h4>Name: Lorem</h4>
+                  <div class="col-lg-12">
+                    <h2>{{ keeper.name if keeper.name else "Snicklemorth Fredachai" }}</h2>
+                    <p>{{ keeper.name }}</p>
                   </div>
-
-                  {# Bio #}
-                  <div class="col-lg-6">
-                    <h4>Bio</h4>
-                    <p>This myth never ends. Soon there will be an unveiling of nature the likes of which the quantum soup has never seen. It is time to take life to the next level.</p>
-
-<p>Through the akashic record, our hearts are enveloped in wellbeing. You will soon be aligned by a power deep within yourself 
-                    </p>
-                  </div>
-
-                  {# XP #}
-                  <div class="col-lg-6">
+                </div>
+                
+                <div class="row">  {# stats row #}
+                  <div class="col-xs-2">
+                    {# XP #}
                     <h4>XP</h4>
-                    <p>xp here</p>
+                    <p>{{ keeper.xp }}</p>
                   </div>
-
+                    
+                  <div class="col-xs-2">
+                    {# HP #}
+                    <h4>HP</h4>
+                  <p>{{ keeper.hp }}</p>
+                  </div>
                   
-                  <div class="col-lg-">
-                    <div class="well">
-                      <p>hello</p>
-                    </div>
+                  <div class="col-xs-2">
+                    {# Money #}
+                    <h4>Money</h4>
+                    <p>{{ keeper.money }}</p>
                   </div>
                 </div>
 
-
-                
               </div>
+              
+              {# Bio #}
               <div class="col-lg-6">
-                <h3>Inventory</h3>
-              </div>
-            </div>            
-          </div>
+                <h4>Bio</h4>
+                <p>This myth never ends. Soon there will be an unveiling of nature the likes of which the quantum soup has never seen. It is time to take life to the next level.</p>
+                
+                <p>Through the akashic record, our hearts are enveloped in wellbeing. You will soon be aligned by a power deep within yourself 
+                </p>
+              </div> {# /bio #}
+              
+            </div>
+          </div> {# end of row containing name, stats, and bio #}
 
-          <div class="tab-pane" id="keeper2">
-            <h4>keeper2</h4>
-          </div>
+          {# inventory row #}
+          <div id="inventory" class="row" >
+            
+            <div class="col-lg-6">
+              <h3>Inventory</h3>
+            </div>
+          </div> {# /#inventory #}
+
+        </div> {# end of keeper tab #}
+
+        <div class="tab-pane" id="keeper2">
+          <h4>keeper2</h4>
         </div>
 
-
-      </div>  {# /.well #}
-    </div>    {# /.col-lg-12 #}
-  </div>      {# /.row #}
-</div>        {# /.container #}
-
-  
-
-
-                  {% for kid, attr in keepers %}
-                  <tr>
-                    <td>{{ kid }}</td>
-                    <td>{{ attr.name }}</td>
-                    <td>{{ attr.xp }}</td>
-                    <td>{{ attr.hp }}</td>
-                    <td>{{ attr.money }}</td>
-                  </tr>
-                  {% endfor %}
-
-
-
-
-<hr>
+      </div> {# end of .well #}
+    </div>   {# end of .col-lg-12 #}
+  </div>     {# end of .row #}
+</div>       {# end of .container #}
 
 
 {% endblock %}

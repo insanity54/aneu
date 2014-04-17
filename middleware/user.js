@@ -449,18 +449,18 @@ var createKeeper = function(uid, callback) {
 }
 
 /**
- * addKeeperImage
+ * setKeeperImage
  *
  * stores the path to a keeper image in the db
  *
  * @param {int} kid            the keeper ID number
  * @param {String} image       a path to the keepers image
- * @callback callback          (err, image)
+ * @callback callback          (err)
  */
-var addKeeperIMage = function(callback) {
+var setKeeperImage = function(callback) {
     client.SET('keeper/' + kid + '/image', image, function(err) {
-        if (err) throw err;
-        callback(err, image);
+        if (err) callback(err);
+        callback(null);
     });
 }
 
@@ -790,12 +790,16 @@ var getKeeper = function(kid, callback) {
 module.exports = {
     findOrCreateTwitter: findOrCreateTwitter,
     findOrCreateFacebook: findOrCreateFacebook,
+    
     getKeeper: getKeeper,
     getKeeperDefaults: getKeeperDefaults,
     getAllKeepers: getAllKeepers,
+    setKeeperImage: setKeeperImage,
+    
     getUser: getUser,
     getAllUsers: getAllUsers,
     getUserType: getUserType,
+    
     isAdmin: isAdmin,
     addAdmin: addAdmin,
     removeAdmin: removeAdmin

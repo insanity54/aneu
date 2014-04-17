@@ -149,7 +149,7 @@ var routes = function(app) {
                 res.send('no such user');
                 
             } else {
-                console.log('no errs interacting with redis');
+                console.log('vv keeper to be rendered vv');
                 console.dir(keeper);
                 res.render('user.html',
                            { keeper: keeper,

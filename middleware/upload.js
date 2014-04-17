@@ -4,6 +4,8 @@ var fs = require('fs');
 
 var handleKeeperImage = function(req, res, next) {
     var upload = req.files.keeperImage;
+//    var keeper = upload.
+    var keeper = 5;
     var newPath = __dirname + '/static/uploads/' + upload.name;
     
     console.log('newpath: ' + newPath);
@@ -14,9 +16,11 @@ var handleKeeperImage = function(req, res, next) {
         fs.writeFile(newPath, data, function(err) {
             if (err) return next(new Error(err));
             console.log('file uploaded.');
-            db.
 
-            next();
+            db.addKeeperImage(keeper, newPath, function(err) {
+                if (err) return('could not upload image');
+                next();
+            });
         });
     });
 }
