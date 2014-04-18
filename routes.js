@@ -134,7 +134,7 @@ var routes = function(app) {
     app.get('/user/:uid', function(req, res) {
 
 
-        var requser = req.params.uid
+        var uid = req.params.uid
         var userinfo = {};
 
         // @todo we want to be able to use a username instead of a UID
@@ -143,16 +143,16 @@ var routes = function(app) {
         // use UID to get user object (db.getKeeper)
 
         // work with redis to get keeper object
-        db.getKeeper(requser, function (err, keeper) {
+        db.getUserKeepers(uid, function (err, keepers) {
             if (err) {
                 console.log('error interacting with redis');
-                res.send('no such user');
+                res.send('no such user keepers');
                 
             } else {
-                console.log('vv keeper to be rendered vv');
-                console.dir(keeper);
+                console.log('vv keepers to be rendered vv');
+                console.dir(keepers);
                 res.render('user.html',
-                           { keeper: keeper,
+                           { keepers: keepers,
                              title: title,
                              subtitle: subtitle
                            });

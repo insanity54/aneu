@@ -271,6 +271,60 @@ var getUser = function(uid, callback) {
                    
 
 /**
+ * getUserKeepers
+ *
+ * Gets all the keeper ID numbers belonging to a specified user
+ *
+ * @param {int} uid     the user id to find owned keepers
+ * @callback done       ({bool} err, {Object} kids)
+ */
+var getUserKeepers = function(uid, done) {
+    var keepers = {};
+
+    // See what keepers the user owns. Returns an array of KIDs
+    client.SMEMBERS('user/' + uid + '/keepers', function(err, kids) {
+        console.log('getUserKeepers kids.length: ' + kids.length);
+        console.dir(kids);
+        console.log('-----');
+
+        // get the individual keeper objects and add them to the
+        // keepers object containing all the user's keepers
+
+        //ccc
+        asyncLoop({
+            length: kids.length,
+            
+            functionToLoop: function(loop, i) {
+
+                
+                var kid = kids[i];
+                
+                //console.dir(keepers);
+                //console.log('_-_-_-_-');
+
+                getKeeper(kid, function(err, keeperstats) {
+                    //console.log('||| Iteration: ' + i + ' lookup kid: ' + kid);
+                    //console.log('got keeper ' + keeperstats + ':');
+                    //console.dir(keeperstats);
+
+                    // stuff each keeper object into the keepers object
+                    // containing all keepers
+                    keepers[kid] = keeperstats;
+
+                    loop(); // loop through all keepers until done
+                });
+            },
+
+            callback: function() {
+                done(null, keepers);
+            }
+        });
+    });
+}
+
+
+
+/**
  * getAllUsers
  *
  * Gets all the users from the db
@@ -428,6 +482,9 @@ var createKeeper = function(uid, callback) {
         // add the keeper to the owner's keeper group
         client.SADD('user/' + uid + '/keepers', kid);
 
+        // add the keeper to the active keeper group
+        client.SADD('keeper/active', kid);
+
         // set some default values
         client.MGET('keeper/default/money',
                     'keeper/default/stats/xp',
@@ -549,6 +606,8 @@ var createUser = function(callback) {
         console.log('user.js::createUser::createUID');
 
 
+        // if this is the first user make them an admin
+        // and set some default values for keepers
         if (uid == 1) {
             addAdmin(uid, function(err) {
                 if (err) throw err;
@@ -557,14 +616,14 @@ var createUser = function(callback) {
                     callback(null, uid);
                 });
             });
-        } else {
-            createKeeper(uid, function(err, kid) {
-                if (err) callback(err, null);
-                console.log('createUser::createUID::createKeeper');
-                callback(null, uid);
-            });
         }
-        
+
+        // create the user's first keeper
+        createKeeper(uid, function(err, kid) {
+            if (err) callback(err, null);
+            console.log('createUser::createUID::createKeeper');
+            callback(null, uid);
+        });
     });
 }
     
@@ -792,11 +851,12 @@ module.exports = {
     findOrCreateFacebook: findOrCreateFacebook,
     
     getKeeper: getKeeper,
-    getKeeperDefaults: getKeeperDefaults,
     getAllKeepers: getAllKeepers,
     setKeeperImage: setKeeperImage,
+    getKeeperDefaults: getKeeperDefaults,
     
     getUser: getUser,
+    getUserKeepers: getUserKeepers,
     getAllUsers: getAllUsers,
     getUserType: getUserType,
     
