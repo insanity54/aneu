@@ -31,7 +31,7 @@ $(document).ready(function() {
         // activate the dropzone        
         dropzones.push(new Dropzone(this, {
             url: "/api/keeper/upload/",
-            params: { pika: "chuuu" },
+            params: { "kid": kid },
             paramName: "keeperImage",
             maxFilesize: 20,
             thumbnailWidth: 100,
@@ -87,16 +87,16 @@ $(document).ready(function() {
 //        console.log("ey there, successful upload. file: " + file.name +
 //                     " res: " + response);
 
-    dropzones.forEach(function(zone) {
+    // dropzones.forEach(function(zone) {
 
-        zone.on("sending", function(file, xhr, formData) {
+    //     zone.on("sending", function(file, xhr, formData) {
 
             
-            console.log("ey there, \'ere we go \'bout tu send. checkout ma formdata: " + formData);
-            formData.append("pika", "CHUUU!");
-            console.dir(formData);
-            $(".dz-success-mark").css({'color': 'green'});
-        });
-    });
+    //         console.log("ey there, \'ere we go \'bout tu send. checkout ma formdata: " + formData);
+    //         formData.append("kid", kid);
+    //         console.dir(formData);
+    //         $(".dz-success-mark").css({'color': 'green'});
+    //     });
+    // });
 });
 

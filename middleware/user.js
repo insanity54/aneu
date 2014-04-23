@@ -516,7 +516,7 @@ var createKeeper = function(uid, callback) {
  * @param {int} kid         the keeper to find the owner of
  * @callback callback       (err, owner)
  */
-var getKeeperOwner = function(kid) {
+var getKeeperOwner = function(kid, callback) {
     client.GET('keeper/' + kid + '/owner', function(err, owner) {
         if (err) callback(err, null);
         callback(null, kid);
