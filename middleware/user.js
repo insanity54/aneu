@@ -268,12 +268,14 @@ var getUser = function(uid, callback) {
                     });
                 });
 }
-                   
+
+
 
 /**
  * getUserKeepers
  *
  * Gets all the keeper ID numbers belonging to a specified user
+ * calls back with an object containing all keeper info
  *
  * @param {int} uid     the user id to find owned keepers
  * @callback done       ({bool} err, {Object} kids)
@@ -505,22 +507,21 @@ var createKeeper = function(uid, callback) {
     });
 }
 
+
 /**
- * setKeeperImage
+ * getKeeperOwner
  *
- * stores the path to a keeper image in the db
+ * Gets the owner of a spcified keeper
  *
- * @param {int} kid            the keeper ID number
- * @param {String} image       a path to the keepers image
- * @callback callback          (err)
+ * @param {int} kid         the keeper to find the owner of
+ * @callback callback       (err, owner)
  */
-var setKeeperImage = function(callback) {
-    client.SET('keeper/' + kid + '/image', image, function(err) {
-        if (err) callback(err);
-        callback(null);
+var getKeeperOwner = function(kid) {
+    client.GET('keeper/' + kid + '/owner', function(err, owner) {
+        if (err) callback(err, null);
+        callback(null, kid);
     });
 }
-
 
  
 /**
@@ -541,6 +542,7 @@ var getKeeperDefaults = function(callback) {
                 });
 }
             
+
 /**
  * setKeeperDefaults
  *
@@ -556,6 +558,30 @@ var setKeeperDefaults = function(callback) {
 
     callback(null);
 };
+
+
+/**
+ * setKeeperImage
+ *
+ * stores the path to a keeper image in the db
+ *
+ * @param {int} kid            the keeper ID number
+ * @param {String} image       a path to the keepers image
+ * @callback callback          (err)
+ */
+var setKeeperImage = function(kid, image, callback) {
+    // discard all path information and just keep the image name
+    // this way we can still refer to the correct image
+    // even if the user changes the upload directory later
+
+    var index = image.lastIndexOf('/') + 1;
+    var image = image.substr(index);
+    
+    client.SET('keeper/' + kid + '/image', image, function(err) {
+        if (err) callback(err);
+        callback(null);
+    });
+}
 
 
 /**
@@ -854,6 +880,7 @@ module.exports = {
     getAllKeepers: getAllKeepers,
     setKeeperImage: setKeeperImage,
     getKeeperDefaults: getKeeperDefaults,
+    getKeeperOwner: getKeeperOwner,
     
     getUser: getUser,
     getUserKeepers: getUserKeepers,

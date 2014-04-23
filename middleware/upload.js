@@ -1,12 +1,11 @@
 var db = require('./user');
 var fs = require('fs');
 
-
 var handleKeeperImage = function(req, res, next) {
     var upload = req.files.keeperImage;
-//    var keeper = upload.
+//    var keeper = upload.pk
     var keeper = 5;
-    var newPath = __dirname + '/static/uploads/' + upload.name;
+    var newPath = __dirname + '../static/uploads/' + upload.name;
     
     console.log('newpath: ' + newPath);
     fs.readFile(upload.path, function(err, data) {

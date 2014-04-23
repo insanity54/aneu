@@ -1,10 +1,9 @@
-var redis = require('redis');
 var db = require('../middleware/user.js');
 
 
 
 var user = function(app) {
-    // select the redis server number set in the app config file                
+    
     /**
      * admin is making a user an admin
      * or removing admin status from a user
@@ -42,6 +41,33 @@ var user = function(app) {
                 }
             });
         }
+    });
+
+
+    /**
+     * user or app is requesting user deets
+     */
+    app.get('/api/user/:uid', function(req, res) {
+
+        uid = req.params.uid;
+        userstats = {};
+        
+        // work with redis to get keeper object
+        db.getUserKeepers(uid, function (err, keepers) {
+            if (err) {
+                console.log('error interacting with redis');
+                res.send('no such user keepers');
+
+                
+            } else {
+                console.log('uid: ' + uid);                
+                console.log('keepers to be json\'d');
+                console.dir(keepers);
+                res.json(keepers);
+            }
+        });
+
+        
     });
 }
 

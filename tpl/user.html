@@ -3,13 +3,13 @@
 {% block center %}
 right here should be the thing
 
-{# Dropzone file upload #}
+<!-- Dropzone file upload -->
 <script type="text/javascript" src="/js/dropzone.js"></script>
 
-{# js customizations for this page #}
+<!-- js customizations for this page -->
 <script type="text/javascript" src="/js/user.js"></script>
 
-{# dropzone css #}
+<!-- dropzone css -->
 <link rel="stylesheet" href="/css/dropzone.css">
 
 
@@ -18,7 +18,7 @@ right here should be the thing
     <div class="col-lg-12">
       <div class="well">
         <div class="list-group">
-          {# test list of all elements of user object #}
+          <!-- test list of all elements of user object -->
           <ul>
             <li class="list-group-item">test</li>
             {% for attribute in user %}
@@ -42,119 +42,113 @@ right here should be the thing
       <div class="well">
 
 
-        {# row for keeper tabs #}
+        <!-- row for keeper tab navs -->
         <div class="row">
           <div class="col-lg-12">
             <div class="tabbable">
               <ul id="sections" class="nav nav-tabs">
                 
-                {# Keeper tabs, created programmatically
-                   depending on how many keepers the user has #}
-                <div id="keeper-tab"></div>
+                <!-- Keeper tabs, created programmatically
+                   depending on how many keepers the user has -->
 
-                <p>keeper iterator:</p>
                 {% for kid, attrib in keepers %}
-                  {{ kid }}
-                  {{ attrib.name }}
-                  {{ attrib.race }}
-                  {{ attrib.class }}
-                  {{ attrib.xp }}
-                  {{ attrib.hp }}
-                  {{ attrib.money }}
+
+                <li><a href="#keeper{{ kid }}" data-toggle="tab"><i class="icon-sword"></i> {{ attrib.name }}</a></li>
                 {% endfor %}
 
-                  {# keeper.count }#
-
-                <li class="active"><a href="#keeper1" data-toggle="tab"><i class="icon-sword"></i> Keeper1</a></li>
-                <li><a href="#keeper2" data-toggle="tab"><i class="icon-sword"></i> Keeper2</a></li>
-              </ul>
-            </div> {# /.tabbable #}
-          </div>   {# /.col-lg-12 #}
-        </div>     {# /.row #}
+              </ul><!-- end list (tabs) -->
+            </div> <!-- /.tabbable -->
+          </div>   <!-- /.col-lg-12 -->
+        </div>     <!-- /.row -->
 
 
-        {# keeper tab content #}
+        <!-- keeper tab panes -->
         <div class="tab-content">
-          <div class="tab-pane active" id="keeper1" data-kid="1">
 
-            {# image and QR row #}
+          {% for kid, keeper in keepers %}
+          <div class="tab-pane" id="keeper{{ kid }}">
+
+            <!-- image and QR row -->
             <div class="row">
 
-              {# image display / image upload #}
+              <!-- image display / image upload -->
+              
               <div class="col-xs-6">
-                <img src="{{ keeper.image }}" />
-                <div id="keeper-image" class="stretch"></div>
+                <form id="keeper{{ kid }}-image" class="square stretch dropzone">
+                  <div class="dz-message"><p>sup yall, upload an img</p></div>
+                  <input type="hidden" name="pikachu" value="chuuuuu" />
+                </form>
               </div>
 
-              {# QR Code #}
+              <!-- QR Code -->
               <div class="col-xs-6">
-                <img src="http://lorempixum.com/200/200/abstract/3" />
-                <img src="{{ keeper.qr }}" />
+                <img src="http://lorempixum.com/200/200/abstract/3" alt="qr" />
+                <img src="{{ keeper.qr }}" alt="qr" />
               </div>
-            </div> {# /.row #}
+            </div> <!-- /.row -->
 
-            {# row containing name, stats, and bio #}
+            <!-- row containing name, stats, and bio -->
             <div class="row">
               <div class="col-lg-6">
                 <div class="row">
                   <div class="col-lg-12">
                     <h2>{{ keeper.name if keeper.name else "Snicklemorth Fredachai" }}</h2>
-                    <p>{{ keeper.name }}</p>
                   </div>
                 </div>
                 
-                <div class="row">  {# stats row #}
+                <div class="row">  <!-- stats row -->
                   <div class="col-xs-2">
-                    {# XP #}
+                    <!-- XP -->
                     <h4>XP</h4>
                     <p>{{ keeper.xp }}</p>
                   </div>
                     
                   <div class="col-xs-2">
-                    {# HP #}
+                    <!-- HP -->
                     <h4>HP</h4>
                   <p>{{ keeper.hp }}</p>
                   </div>
                   
                   <div class="col-xs-2">
-                    {# Money #}
+                    <!-- Money -->
                     <h4>Money</h4>
                     <p>{{ keeper.money }}</p>
                   </div>
                 </div>
-
               </div>
               
-              {# Bio #}
+              <!-- Bio -->
               <div class="col-lg-6">
                 <h4>Bio</h4>
                 <p>This myth never ends. Soon there will be an unveiling of nature the likes of which the quantum soup has never seen. It is time to take life to the next level.</p>
                 
                 <p>Through the akashic record, our hearts are enveloped in wellbeing. You will soon be aligned by a power deep within yourself 
                 </p>
-              </div> {# /bio #}
-              
-            </div>
-          </div> {# end of row containing name, stats, and bio #}
 
-          {# inventory row #}
-          <div id="inventory" class="row" >
+              </div> <!-- /bio -->          
+            </div>     <!-- end of row containing name, stats, and bio -->
+
+          <!-- inventory row -->
+          <div class="row" >
             
             <div class="col-lg-6">
               <h3>Inventory</h3>
+              <p>hat</p>
+              <p>spoon</p>
+              <p>boots</p>
+              
             </div>
-          </div> {# /#inventory #}
+          </div> <!-- /.row -->
+          
+        </div>   <!-- end of keeper tab -->
 
-        </div> {# end of keeper tab #}
+        {% endfor %}  <!-- end of keeper tab pane -->
 
-        <div class="tab-pane" id="keeper2">
-          <h4>keeper2</h4>
-        </div>
 
-      </div> {# end of .well #}
-    </div>   {# end of .col-lg-12 #}
-  </div>     {# end of .row #}
-</div>       {# end of .container #}
+      </div> <!-- end of .well -->
+    </div>   <!-- end of .col-lg-12 -->
+  </div>     <!-- end of .row -->
+</div>       <!-- end of .container -->
 
 
 {% endblock %}

@@ -2,7 +2,7 @@
 
 var passport = require('passport');
 var db = require('./middleware/user');
-var upload = require('./middleware/upload');
+//var upload = require('./middleware/upload');
 
 
 
@@ -49,28 +49,7 @@ var routes = function(app) {
         });
     });
             
-    /** 
-     * testing uploading of pictures
-     */
-    app.get('/testupload', function(req, res) {
-        var form="<!DOCTYPE HTML><html><body>" +
-"<form method='post' action='/upload' enctype='multipart/form-data'>" +
-"<input type='file' name='image'/>" +
-"<input type='submit' /></form>" +
-            "</body></html>";
-
-    });
-
     
-    app.post('/upload',
-             upload.handleKeeperImage,
-             function(req, res) {
-
-                 console.log('this is only called upon SUCCEESSS');
-                 res.send(200);
-             });
-        
-
     app.get('/user/type', function(req, res) {
         db.getUserType(req.user, function(err, type) {
             

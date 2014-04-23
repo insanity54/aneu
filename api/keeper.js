@@ -44,6 +44,18 @@ var keeper = function(app) {
         
     });
 
+
+
+    /**
+     * user is requesting keeper information
+     */
+    app.get('/api/keeper/:kid', function(req, res) {
+        var kid = req.params.kid;
+        
+        db.getKeeper(kid, function(err, keeper) {
+            res.json(keeper);
+        });
+    });
 }
                                 
 module.exports = keeper;

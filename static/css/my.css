@@ -16,10 +16,10 @@
     background: green;
 }
 
-div#keeper-image {
+div.keeper-image {
     height: 200px;
     width: 200px;
-    outline: 1px solid black;
+    outline: 1px dashed brown;
     background-image: url("/img/keeper.png");
 }
 
