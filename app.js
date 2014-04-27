@@ -33,6 +33,7 @@ app.set('facebook_app_secret', nconf.get('FACEBOOK_APP_SECRET'));
 app.set('facebook_login_callback', nconf.get('FACEBOOK_LOGIN_CALLBACK'));
 app.set('redisserver', nconf.get('REDISSERVER'));
 app.set('upload_dir', nconf.get('UPLOAD_DIR'));
+app.set('img_dir', nconf.get('IMG_DIR'));
 
 // nunjucks templating
 nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader(__dirname + '/tpl'), { autoescape: true });
@@ -71,6 +72,7 @@ require('./api/auth')(app);
 require('./api/keeper')(app);
 require('./api/user')(app);
 require('./api/upload')(app);
+require('./api/qr')(app);
 
 server.listen(port);
 console.log('server listening on port ' + port);

@@ -74,6 +74,12 @@ right here should be the thing
               <!-- image display / image upload -->
               
               <div class="col-xs-6">
+                {# display keeper image if one is uploaded for this keeper #}
+                {% if keeper.image %}
+                <img src="/uploads/{{ keeper.image }}" />
+                {% endif %}
+
+                {# dropzone form for keeper image upload #}
                 <form id="keeper{{ kid }}-image" class="square stretch dropzone">
                   <div class="dz-message"><p>sup yall, upload an img</p></div>
                   <input type="hidden" name="pikachu" value="chuuuuu" />
@@ -83,6 +89,7 @@ right here should be the thing
               <!-- QR Code -->
               <div class="col-xs-6">
                 <img src="http://lorempixum.com/200/200/abstract/3" alt="qr" />
+                <p>KEEPER.QR:{{ keeper.qr }}</p>
                 <img src="{{ keeper.qr }}" alt="qr" />
               </div>
             </div> <!-- /.row -->

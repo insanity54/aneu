@@ -26,6 +26,8 @@
     "redis": "~0.10.1",
     "nunjucks": "~1.0.1",
     "mime-magic": "~5.14.0",
-    "multiparty": "~3.2.4"
+    "multiparty": "~3.2.4",
+    "qr-image": "~1.1.0",
+    "png-word": "0.0.7"
   }
 }

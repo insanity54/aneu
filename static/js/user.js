@@ -46,16 +46,14 @@ $(document).ready(function() {
 
 
     // get this keeper's image
-    
     // add keeper image to "mockfile"
     // display keeper image
-    //var //ccc
 
     var mockFile = { name: "terd", size: 12345 };
     dropzones.forEach(function(dropzone) {
 
         dropzone.emit("addedfile", mockFile);
-        dropzone.emit("thumbnail", mockFile, "/uploads/keeper2.png");
+        dropzone.emit("thumbnail", mockFile, "/uploads/keeper2.png"); //+ keepers[1].image);
 
         var existingFileCount = 0;
         dropzone.options.maxFiles = dropzone.options.maxFiles - existingFileCount;    
@@ -71,7 +69,7 @@ $(document).ready(function() {
         console.log('  previous   : ' + e.relatedTarget);
     });
         
-    
+});  
 
 
     // @todo //ccc keeper images need to be added programmamatically
@@ -97,6 +95,6 @@ $(document).ready(function() {
     //         console.dir(formData);
     //         $(".dz-success-mark").css({'color': 'green'});
     //     });
-    // });
-});
+    // });}
+//);
 

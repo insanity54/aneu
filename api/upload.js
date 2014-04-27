@@ -8,7 +8,6 @@ var upload = function(app) {
     app.post('/api/keeper/upload',
              handleKeeperImage,
              function(req, res) {
-
                  console.log('this is only called upon SUCCEESSS');
                  res.send(200);
              });
@@ -25,7 +24,7 @@ var upload = function(app) {
 
             console.log('files: ');
             console.dir(files);
-            var upload = files.keeperImage;
+
 
             // get submitted kid
             // validate submitted kid
@@ -33,10 +32,11 @@ var upload = function(app) {
             //   - does submitted kid belong to logged in user?
             //     - valid
 
+            var upload = files.keeperImage[0];
             var kid = fields.kid;
             var requester = req.user;
 
-            console.log('kid:' + kid + ' requester:' + requester);
+            console.log('kid:' + kid + ' requester:' + requester + ' originalFilename:' + upload.originalFilename);
 
             console.log('requester user:');
             console.dir(req.user);
@@ -51,8 +51,8 @@ var upload = function(app) {
                         console.log('requester is keeper owner');
                         
                         if (uploadDir.substr(-1) == '/') uploadDir = uploadDir.substr(0, uploadDir.length - 1); // remove trailing slash from uploadDir if there is one
-                        console.log('upload name: ' + upload.name);
-                        var newPath = uploadDir + '/' + upload.name;
+                        console.log('upload name: ' + upload.originalFilename);
+                        var newPath = uploadDir + '/' + upload.originalFilename;
                         
                         
                         console.log('newpath: ' + newPath);
@@ -70,6 +70,7 @@ var upload = function(app) {
                                 console.log('file uploaded.');
                                 
                                 db.setKeeperImage(kid, newPath, function(err) {
+                                    console.log('i just set image. kid:' + kid + ' newPath:' + newPath);
                                     if (err) throw err;
                                     console.log('set keeper image successfullyy');
                                     next();

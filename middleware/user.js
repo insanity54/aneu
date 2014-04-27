@@ -2,7 +2,7 @@
 var redis = require('redis');
 var client = redis.createClient();
 client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come from config
-
+var qrcode = require('./qr');
 
 
 
@@ -474,6 +474,15 @@ var createFacebook = function(fuid, callback) {
 }
 
 
+/*
+ * createKeeper
+ *
+ * Creates a new keeper. utility function called by other functions.
+ *
+ * @param {int} uid        the user ID that owns this keeper
+ * @callback callback      called when keeper is created.
+ *                         ({bool} err, {int} kid)
+ */
 var createKeeper = function(uid, callback) {
     console.log('db:createKeeper - uid:' + uid);
     
@@ -487,23 +496,30 @@ var createKeeper = function(uid, callback) {
         // add the keeper to the active keeper group
         client.SADD('keeper/active', kid);
 
-        // set some default values
-        client.MGET('keeper/default/money',
-                    'keeper/default/stats/xp',
-                    'keeper/default/stats/hp',
-                    function(err, results) {
+        // create QR code for the keeper
+        qrcode.create('data', function(err, path) {
+            if (err) throw err;
+            client.SET('keeper/' + KID + '/QR', path);
 
-                        if (err) throw err;
 
-                        client.set('keeper/' + kid + '/money', results[0]);
-                        client.set('keeper/' + kid + '/stats/xp', results[1]);
-                        client.set('keeper/' + kid + '/stats/hp', results[2]);
-
-                        // add keeper to user's keeper list
-                        client.sadd('user/' + uid + '/keepers', kid);
-
-                        callback(null, kid);
-                    });
+            // set some default values
+            client.MGET('keeper/default/money',
+                        'keeper/default/stats/xp',
+                        'keeper/default/stats/hp',
+                        function(err, results) {
+                            
+                            if (err) throw err;
+                            
+                            client.set('keeper/' + kid + '/money', results[0]);
+                            client.set('keeper/' + kid + '/stats/xp', results[1]);
+                            client.set('keeper/' + kid + '/stats/hp', results[2]);
+                            
+                            // add keeper to user's keeper list
+                            client.sadd('user/' + uid + '/keepers', kid);
+                            
+                            callback(null, kid);
+                        });
+        });
     });
 }
 
@@ -827,11 +843,6 @@ var getAllKeepers = function(done) {
     });
 }
 
-        
-               
-    
-    
-
 
 /**
  * getKeeper
@@ -848,7 +859,8 @@ var getKeeper = function(kid, callback) {
 
     var keeperstats = {};
     console.log('user::getKeeper requested keeper: ' + kid);
-    
+
+    // new keeper attributes to render to the page are added here
     client.MGET(
         'keeper/' + kid + '/name',
         'keeper/' + kid + '/race',
@@ -856,6 +868,8 @@ var getKeeper = function(kid, callback) {
         'keeper/' + kid + '/stats/xp',
         'keeper/' + kid + '/stats/hp',
         'keeper/' + kid + '/money',
+        'keeper/' + kid + '/image',
+        'keeper/' + kid + '/qr',
 
         function(err, replies) {
             if (err) throw err;
@@ -866,6 +880,9 @@ var getKeeper = function(kid, callback) {
             keeperstats['xp'] = replies[3];
             keeperstats['hp'] = replies[4];
             keeperstats['money'] = replies[5];
+            keeperstats['image'] = replies[6];
+            keeperstats['qr'] = replies[7];
+            
 
             callback(null, keeperstats);
         });
