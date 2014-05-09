@@ -869,7 +869,6 @@ var getKeeper = function(kid, callback) {
         'keeper/' + kid + '/stats/hp',
         'keeper/' + kid + '/money',
         'keeper/' + kid + '/image',
-        'keeper/' + kid + '/qr',
 
         function(err, replies) {
             if (err) throw err;
@@ -881,7 +880,6 @@ var getKeeper = function(kid, callback) {
             keeperstats['hp'] = replies[4];
             keeperstats['money'] = replies[5];
             keeperstats['image'] = replies[6];
-            keeperstats['qr'] = replies[7];
             
 
             callback(null, keeperstats);
