@@ -24,6 +24,7 @@ port = app.get('port');
 
 app.set('title', nconf.get('TITLE'));
 app.set('subtitle', nconf.get('SUBTITLE'));
+app.set('domain', nconf.get('DOMAIN'));
 app.set('session_secret', nconf.get('SESSION_SECRET'));
 app.set('twitter_consumer_key', nconf.get('TWITTER_CONSUMER_KEY'));
 app.set('twitter_secret_key', nconf.get('TWITTER_SECRET_KEY'));

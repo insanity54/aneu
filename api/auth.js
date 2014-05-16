@@ -57,9 +57,9 @@ var auth = function(app) {
     });
 
     // route to log out
-    app.post('/api/auth/logout', function(req, res) {
+    app.get('/api/auth/logout', function(req, res) {
 	req.logOut();
-	res.send(200);
+	res.redirect('/');
     });
 
     passport.use(new TwitterStrategy({

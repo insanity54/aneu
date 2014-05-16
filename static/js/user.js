@@ -1,5 +1,6 @@
 // turn on x-editable inline mode
-$.fn.editable.defaults.mode = 'inline';
+//$.fn.editable.defaults.mode = 'inline';
+
 
 Dropzone.autoDiscover = false; // because creating dropzones programmatically
 
@@ -16,7 +17,6 @@ $(document).ready(function() {
     //       - has keeper ID in hidden formData https://developer.mozilla.org/en-US/docs/Web/API/FormData
 
 
-    // activate the first keeper tab nav
     $('.tabbable a:first').tab('show');
 
     var dropzones = [];  // array for all the dropzones
@@ -25,10 +25,8 @@ $(document).ready(function() {
     $('form[id^="keeper"][id$="-image"]').each(function() {
         var kid = this.id.replace( /\D+/g, ''); 
         
-        console.log(this.id + ' and the kid:' + kid);
-        console.dir(this);
 
-        // activate the dropzone        
+        // activate the dropzone
         dropzones.push(new Dropzone(this, {
             url: "/api/keeper/upload/",
             params: { "kid": kid },
@@ -39,10 +37,47 @@ $(document).ready(function() {
             maxFiles: 1,
             acceptedFiles: "image/*",
             addRemoveLinks: "true",
-            
             dictDefaultMessage: "Drop image here to upload"
         }));
     });
+
+
+
+    // activate the x-editable fields
+    // for each keeper on the page, activate the user editable fields
+    $('div.tab-content').each(function() {
+
+       //$(this).css({ 'border': '5px solid red' });
+    
+        $('.name').editable({
+            name: 'keepername',
+            type: 'text',
+            pk: '/api/keeper/name',
+            url: '/api/keeper/name', // url to process submitted data       
+            title: 'Enter keeper name'
+        });
+
+        $('.bio').editable({
+            name: 'keeperbio',
+            type: 'textarea',
+            pk: '/api/keeper/bio',
+            url: '/api/keeper/bio',
+            title: 'Enter keeper biography'
+        });
+
+        $('.').editable({
+            name: 'keeperbio',
+            type: 'textarea',
+            pk: '/api/keeper/bio',
+            url: '/api/keeper/bio',
+            title: 'Enter keeper biography'
+        });
+
+       
+            
+   });
+
+
 
 
     // get this keeper's image
@@ -70,31 +105,3 @@ $(document).ready(function() {
     });
         
 });  
-
-
-    // @todo //ccc keeper images need to be added programmamatically
-    // @todo when we add multiple keepers per user page
-    //       create dropzones programmatically
-    //       http://www.dropzonejs.com/#toc_8
-
-//    myDropzone.on("addedfile", function(file) {
-//        alert("ey there that's a nice file you got there");
-//    });
-        
-//    myDropzone.on("success", function(file, response) {
-//        console.log("ey there, successful upload. file: " + file.name +
-//                     " res: " + response);
-
-    // dropzones.forEach(function(zone) {
-
-    //     zone.on("sending", function(file, xhr, formData) {
-
-            
-    //         console.log("ey there, \'ere we go \'bout tu send. checkout ma formdata: " + formData);
-    //         formData.append("kid", kid);
-    //         console.dir(formData);
-    //         $(".dz-success-mark").css({'color': 'green'});
-    //     });
-    // });}
-//);
-

@@ -496,7 +496,7 @@ var createKeeper = function(uid, callback) {
         // add the keeper to the active keeper group
         client.SADD('keeper/active', kid);
 
-        // create QR code for the keeper
+        // create QR code for the keeper //ccc
         qrcode.create('data', function(err, path) {
             if (err) throw err;
             client.SET('keeper/' + KID + '/QR', path);

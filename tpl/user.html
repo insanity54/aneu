@@ -3,14 +3,26 @@
 {% block center %}
 right here should be the thing
 
+{% if editable %}
+<!-- x-editable -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
+
+
+<!-- x-editable -->
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+
+<!-- dropzone css -->
+<link rel="stylesheet" href="/css/dropzone.css">
+
+{% endif %}
+
 <!-- Dropzone file upload -->
 <script type="text/javascript" src="/js/dropzone.js"></script>
 
 <!-- js customizations for this page -->
 <script type="text/javascript" src="/js/user.js"></script>
 
-<!-- dropzone css -->
-<link rel="stylesheet" href="/css/dropzone.css">
 
 
 <div class="container">
@@ -41,7 +53,6 @@ right here should be the thing
     <div class="col-lg-12">
       <div class="well">
 
-
         <!-- row for keeper tab navs -->
         <div class="row">
           <div class="col-lg-12">
@@ -53,7 +64,12 @@ right here should be the thing
 
                 {% for kid, attrib in keepers %}
 
-                <li><a href="#keeper{{ kid }}" data-toggle="tab"><i class="icon-sword"></i> {{ attrib.name }}</a></li>
+                <li>
+                  <a href="#keeper{{ kid }}" data-toggle="tab">
+                    <i class="icon-sword"></i>
+                    {{ attrib.name }}
+                  </a>
+                </li>
                 {% endfor %}
 
               </ul><!-- end list (tabs) -->
@@ -97,7 +113,17 @@ right here should be the thing
               <div class="col-lg-6">
                 <div class="row">
                   <div class="col-lg-12">
-                    <h2>{{ keeper.name if keeper.name else "Snicklemorth Fredachai" }}</h2>
+                    <h2>
+                      {% if editable %}
+                        {# make editable if the user has permission #}
+                        <a href="#" class="name">
+                      {% endif %}
+                      
+                        {{ keeper.name if keeper.name else "Snicklemorth Fredachai" }}
+                      {% if editable %}
+                        </a>
+                      {% endif %}
+                    </h2>
                   </div>
                 </div>
                 
@@ -125,12 +151,12 @@ right here should be the thing
               <!-- Bio -->
               <div class="col-lg-6">
                 <h4>Bio</h4>
-                <p>This myth never ends. Soon there will be an unveiling of nature the likes of which the quantum soup has never seen. It is time to take life to the next level.</p>
-                
-                <p>Through the akashic record, our hearts are enveloped in wellbeing. You will soon be aligned by a power deep within yourself 
-                </p>
+                <div>
+                  {% if editable %}
+                  {# make editable if user has permission #}<a href="#" class="bio">{% endif %}This myth never ends. Soon there will be an unveiling of nature the likes of which the quantum soup has never seen. It is time to take life to the next level.{% if editable %}</a>{% endif %}
 
-              </div> <!-- /bio -->          
+                  </div>
+                </div> <!-- /bio -->          
             </div>     <!-- end of row containing name, stats, and bio -->
 
           <!-- inventory row -->

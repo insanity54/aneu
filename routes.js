@@ -128,13 +128,47 @@ var routes = function(app) {
                 res.send('no such user keepers');
                 
             } else {
-                console.log('vv keepers to be rendered vv');
-                console.dir(keepers);
-                res.render('user.html',
-                           { keepers: keepers,
-                             title: title,
-                             subtitle: subtitle
-                           });
+                // no errors
+                
+                var user = null;
+                if (req.isAuthenticated()) {
+
+                    // user is logged in
+
+                    console.log('user ' + req.user +
+                                'is viewing user page' + uid );
+
+                    if ( req.user === uid ) {
+                        // user is owner of this page
+                        console.log('user owns this page');
+                        
+                        user = req.user;
+                        
+                        console.log('vv keepers to be rendered vv');
+                        console.dir(keepers);
+                        res.render('user.html',
+                                   { keepers: keepers,
+                                     title: title,
+                                     subtitle: subtitle,
+                                     user: user,
+                                     editable: true
+                                   });
+                        
+                    }
+                    
+                } else {
+                    // user not logged in or
+                    // user is not owner of this page
+
+                    console.log('user not logged in or does not own this page');
+                    
+                    res.render('user.html',
+                               { keepers: keepers,
+                                 title: title,
+                                 subtitle: subtitle,
+                                 editable: false
+                               });
+                }
             }
         });
     });       
