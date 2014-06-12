@@ -1,7 +1,7 @@
 
 var redis = require('redis');
 var client = redis.createClient();
-client.select(8, function(inf) { console.log(inf) }); //@todo this needs to come from config
+client.select(8); //@todo this needs to come from config
 var qrcode = require('./qr');
 
 
@@ -213,7 +213,7 @@ var asyncLoop = function(o) {
         i++;
         if (i == o.length) { o.callback(); return; }
         o.functionToLoop(loop, i);
-        console.log(' ||| i:' + i + ' o.length:' + o.length + ' |||');
+        //console.log(' ||| i:' + i + ' o.length:' + o.length + ' |||');
     }
     loop(); //init
 }
@@ -229,8 +229,8 @@ var asyncLoop = function(o) {
  */
 var isAdmin = function(uid, callback) {
     client.SISMEMBER('user/admins', uid, function(err, member) {
-        console.log('checking to see if user ' + uid + ' is an admin');
-        console.dir(uid);
+        //console.log('checking to see if user ' + uid + ' is an admin');
+        //console.dir(uid);
         if (err) callback(true, null);
         callback(null, member);
     });
@@ -285,9 +285,9 @@ var getUserKeepers = function(uid, done) {
 
     // See what keepers the user owns. Returns an array of KIDs
     client.SMEMBERS('user/' + uid + '/keepers', function(err, kids) {
-        console.log('getUserKeepers kids.length: ' + kids.length);
-        console.dir(kids);
-        console.log('-----');
+        //console.log('getUserKeepers kids.length: ' + kids.length);
+        //console.dir(kids);
+        //console.log('-----');
 
         // get the individual keeper objects and add them to the
         // keepers object containing all the user's keepers
@@ -340,8 +340,10 @@ var getAllUsers = function(done) {
     // get total number of keepers in the LARP
     client.GET('user/index', function(err, total) {
         if (err) throw err;
-        if (total == null) { console.log("ERROR: There are no users"); }
-        console.log('total is: ' + total);
+        if (total == null) { //
+            console.log("ERROR: There are no users");
+        }
+        //console.log('total is: ' + total);
 
         
         asyncLoop({
@@ -350,13 +352,13 @@ var getAllUsers = function(done) {
             functionToLoop: function(loop, i) {
                 var user = i + 1; // little offset to start at 1 instead of 0
                 getUser(user, function(err, userstats) {
-                    console.log('got user ' + user + ':');
-                    console.dir(userstats);
+                    //console.log('got user ' + user + ':');
+                    //console.dir(userstats);
 
                     // stuff each keeper object into the champs object
                     // containing all keepers
                     users[user] = userstats;
-                    console.dir(users);
+                    //console.dir(users);
 
                     loop(); // loop through all users until done
                 });
@@ -484,7 +486,7 @@ var createFacebook = function(fuid, callback) {
  *                         ({bool} err, {int} kid)
  */
 var createKeeper = function(uid, callback) {
-    console.log('db:createKeeper - uid:' + uid);
+    //console.log('db:createKeeper - uid:' + uid);
     
     client.INCR('keeper/index', function(err, kid) {
         // set the keeper's owner (user)
@@ -499,7 +501,7 @@ var createKeeper = function(uid, callback) {
         // create QR code for the keeper //ccc
         qrcode.create('data', function(err, path) {
             if (err) throw err;
-            client.SET('keeper/' + KID + '/QR', path);
+            client.SET('keeper/' + kid + '/qr', path);
 
 
             // set some default values
@@ -609,11 +611,11 @@ var setKeeperImage = function(kid, image, callback) {
  * @callback callback   (err)
  */
 var addAdmin = function(uid, callback) {
-    console.log('db:addAdmin - creating admin' + uid);
+    //console.log('db:addAdmin - creating admin' + uid);
     
     client.SADD('user/admins', uid, function(err, reply) {
         if (err) throw err;
-        console.log('addAdmin reply: ' + reply);
+        //console.log('addAdmin reply: ' + reply);
         callback(null);
     });
 }
@@ -642,10 +644,10 @@ var removeAdmin = function(uid, callback) {
  * @callback callback    (err, uid)
  */
 var createUser = function(callback) {
-    console.log('user.js::createUser');
+    //console.log('user.js::createUser');
     
     createUID(function(err, uid) {
-        console.log('user.js::createUser::createUID');
+        //console.log('user.js::createUser::createUID');
 
 
         // if this is the first user make them an admin
@@ -663,7 +665,7 @@ var createUser = function(callback) {
         // create the user's first keeper
         createKeeper(uid, function(err, kid) {
             if (err) callback(err, null);
-            console.log('createUser::createUID::createKeeper');
+            //console.log('createUser::createUID::createKeeper');
             callback(null, uid);
         });
     });
@@ -718,7 +720,7 @@ var createIID = function(callback) {
     client.INCR('item/index', function(err, iid) {
         client.SADD('item/all', iid, function(err, reply) {
             if (err) throw err;
-            console.log('createIID reply: ' + reply);
+            //console.log('createIID reply: ' + reply);
             callback(null, iid);
         });
     });
@@ -858,7 +860,7 @@ var getAllKeepers = function(done) {
 var getKeeper = function(kid, callback) {
 
     var keeperstats = {};
-    console.log('user::getKeeper requested keeper: ' + kid);
+    //console.log('user::getKeeper requested keeper: ' + kid);
 
     // new keeper attributes to render to the page are added here
     client.MGET(

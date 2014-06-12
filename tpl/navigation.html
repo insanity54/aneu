@@ -1,15 +1,15 @@
-<div class="navbar navbar-fixed-top navbar-inverse">
-    <div class="container">
+<div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+    <div class="container-fluid">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="#">{{ title }}</a>
-    </div><!-- /.container -->
+    </div>  {# /.container-fluid #}
 
-    
-    <div class="navbar-collapse collapse" style="height: auto;">
+    <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li class="active">
           <a href="/user">My Stats</a>
@@ -27,5 +27,5 @@
           <a href="/api/auth/logout">Log out</a>
         </li>
       </ul>
-    </div>
-</div><!-- /.navbar -->
+    </div> {# /.navbar-collapse /.collapse #}
+</div>     {# /.navbar #}

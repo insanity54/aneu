@@ -2,6 +2,7 @@
 
 var passport = require('passport');
 var db = require('./middleware/user');
+var admin = require('./middleware/admin');
 //var upload = require('./middleware/upload');
 
 
@@ -67,44 +68,40 @@ var routes = function(app) {
     /**
      * Admin control panel
      */
-    app.get('/admin', function(req, res) {
+    app.get('/admin',
+            admin.check,
+            function(req, res) {
         // if session exists
-        if (req.isAuthenticated()) {
-            console.log('session exists');
+        // if (req.isAuthenticated()) {
+        //     console.log('session exists');
                 
-            db.isAdmin(req.user, function(err, admin) {
-                if (err) throw err;
-                if (admin) {
-                    // user is in admin group
-                    console.log('user is in admin group');
+        //     db.isAdmin(req.user, function(err, admin) {
+        //         if (err) throw err;
+        //         if (admin) {
+        //             // user is in admin group
+        //             console.log('user is in admin group');
 
-                    // get default configurations
-                    db.getKeeperDefaults(function(err, configs) {
-                        if (err) throw err;
+                
+                
+                // get default configurations
+                db.getKeeperDefaults(function(err, configs) {
+                    if (err) throw err;
 
-                        db.getAllKeepers(function(err, keepers) {
-                            console.log('got all keepers: ');
-                            console.dir(keepers);
-                            console.log('champ1 sword: ' + keepers[1].sword);
-
-                            db.getAllUsers(function(err, users) {
-                                res.render('admin.html',
-                                           { keepers: keepers,
-                                             users: users,
-                                             configs: configs });
-                            });
+                    db.getAllKeepers(function(err, keepers) {
+                        console.log('got all keepers: ');
+                        console.dir(keepers);
+                        console.log('champ1 sword: ' + keepers[1].sword);
+                        
+                        db.getAllUsers(function(err, users) {
+                            res.render('admin.html',
+                                       { keepers: keepers,
+                                         users: users,
+                                         configs: configs });
                         });
                     });
-
-                } else {
-                    res.send('you are nut an admin.');
-                }
+                });
             });
-        } else {
-            console.log('session does not exist');
-            res.send(401);
-        }
-    });
+
 
 
     /**

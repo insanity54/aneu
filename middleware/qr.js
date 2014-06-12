@@ -12,11 +12,11 @@ var fs = require('fs');
  * @param {String} data     data to be encoded into QR code
  * @callback callback       ({bool} err, {String} path)
  */
-var create = function(data, dir, callback) {
+var create = function(data, callback) {
     console.log('qr::create');
 
     id = Math.random().toString(36).substring(7);
-    path = dir + '/' + id + '-qr.png';
+//    path = dir + '/' + id + '-qr.png';
     console.log('id: ' + id);
     
     var qrPNG = qr.image(data, { type: 'png' });
@@ -25,6 +25,7 @@ var create = function(data, dir, callback) {
     callback(null, qrPNG); // qrPNG is a readable stream
 //    qrPNG.pipe(fs.createWriteStream(path));
 
+    
 
 
 //    callback(null, path);
